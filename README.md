@@ -1,101 +1,168 @@
-# VULNIX - Kurumsal Zaafiyet Yönetim Sistemi
-### Vulnerability Management & Incident Response System (v2.0)
+<p align="center">
+  <img src="app/static/img/vulnix_logo.svg" alt="VULNIX Logo" width="120" height="120">
+</p>
 
-OpenVAS / Greenbone GSAD API ve XML tarama raporlarıyla entegre çalışan, rol tabanlı kullanıcı yetkilendirme (Admin / Analist), otomatik arka plan zamanlayıcısı (*Background Scheduler*), çalışan aksiyon takibi, zaafiyet üstlenme ("Görevi Üstlen"), termin (SLA) takvimi, SMTP e-posta bildirim motoru ve C-Level yönetici raporlaması sunan tam teşekküllü kurumsal zaafiyet yönetim platformu.
+<h1 align="center">VULNIX</h1>
+<p align="center">
+  <strong>Enterprise Vulnerability Management & Incident Response Platform</strong><br>
+  <em>OpenVAS / Greenbone GSAD 27 API Integration • Autonomous Background Scheduler • RBAC Incident Triage • Cross-Platform (Kali Linux & Windows)</em>
+</p>
 
-**Kali Linux**, **Ubuntu/Debian** ve **Windows (10/11/Server)** üzerinde tamamen yerel ve bağımsız olarak Python ile çalışır.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python Version">
+  <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Platform-Kali%20Linux%20%7C%20Windows-brightgreen" alt="Platform">
+  <img src="https://img.shields.io/badge/Scanner-OpenVAS%20%2F%20Greenbone%20OS%2025-orange" alt="OpenVAS">
+  <img src="https://img.shields.io/badge/Architecture-Asyncio%20Scheduler-purple" alt="Async Scheduler">
+</p>
 
 ---
 
-## 🚀 Hızlı Başlatma (Quick Start)
+## 🌐 English Documentation
 
-### 🐧 Kali Linux / Ubuntu / Debian:
+### 📌 Overview
+**VULNIX** is an independent, lightweight, self-hosted Vulnerability Management and Incident Response platform built for corporate SOC, Blue Team, and DevSecOps environments. 
+
+Rather than relying on clunky, expensive enterprise monoliths or disconnected spreadsheet trackers, VULNIX connects directly to network vulnerability scanners (**OpenVAS / Greenbone OS 25 / GSAD 27** and Nessus XML) over authenticated HTTPS, ingests live findings, eliminates duplicate entries, automates team task delegation, and tracks remediations across strict SLA deadlines.
+
+---
+
+### 🛡️ Key Enterprise Features
+
+1. **Direct OpenVAS / Greenbone GSAD 27 Integration**:
+   - Communicates with live Greenbone instances (e.g. running on VMware NAT, isolated lab subnets, or corporate LAN).
+   - Ingests CVE identifiers, CVSS v3.1 scores, attack vectors, threat impact assessments, and vendor remediation advice.
+   - **Persistent Credentials**: Eliminates repetitive password prompts by securely storing encrypted connection settings.
+
+2. **Autonomous Background Scheduler**:
+   - An asynchronous engine running continuously in the background.
+   - Queries vulnerability scanners at customizable intervals (**5m, 15m, 30m, 1h, 6h, 24h**).
+   - **Intelligent Deduplication**: Guarantees existing open findings are not duplicated upon re-scans.
+   - Real-time status heartbeat and scan telemetry badge in the UI.
+
+3. **Role-Based Access Control (RBAC) & Triage Workflow**:
+   - **Administrator**: Full system visibility, user management (`/users`), scanner API & SMTP configuration, and audit logs.
+   - **Security Analyst**: Inspects assigned vulnerabilities, claims open unassigned issues with one click (*"Claim Vulnerability"*), uploads patch verification PoC screenshots, and records immutable response logs.
+
+4. **Strict 8-Column Enterprise SLA Tracking Table**:
+   - `Record ID` (`VULN-2026-XXXX`) • `Title & Target Host:Port` • `Severity (Critical/High/Medium/Low)` • `Department` • `Assignee` • `Status Analysis` • `SLA Due Date` • `Closed Date`.
+   - Real-time overdue alerts for breaches of remediation deadlines.
+
+5. **C-Level Executive Reporting**:
+   - One-click boardroom-ready security assessment reports (`/reports/executive`).
+   - Dark-mode preview with clean white print/PDF stylesheet formatting for executive presentations and compliance audits.
+
+6. **100% Cross-Platform & Zero Cloud Dependency**:
+   - Runs natively on **Kali Linux**, **Ubuntu/Debian**, and **Windows (10/11/Server)** without requiring external cloud accounts or compiled C++ dependencies.
+
+---
+
+### 🚀 Quick Start Guide
+
+#### 🐧 Linux (Kali Linux, Ubuntu, Debian):
 ```bash
+# Clone the repository
+git clone https://github.com/meminerturk29/vulnix.git
+cd vulnix
+
+# Make launchers executable and run
 chmod +x start.sh run.py
 ./start.sh
 ```
-*veya doğrudan:*
+*Or run manually using Python:*
 ```bash
 python3 -m pip install -r requirements.txt
 python3 run.py
 ```
 
-### 🪟 Windows (10 / 11 / Server):
-`start.bat` dosyasına çift tıklayarak çalıştırabilir veya CMD/PowerShell üzerinden:
+#### 🪟 Windows (10 / 11 / Server):
+Double-click `start.bat` or run from PowerShell / CMD:
 ```cmd
-python -m pip install -r requirements.txt
+git clone https://github.com/meminerturk29/vulnix.git
+cd vulnix
+pip install -r requirements.txt
 python run.py
 ```
 
-Tarayıcınızdan **`http://localhost:8000`** adresine giderek sisteme erişebilirsiniz.
+Navigate to **`http://localhost:8000`** in your browser.
 
 ---
 
-## 🔑 Varsayılan Kullanıcı Giriş Bilgileri
+### 🔑 Default Credentials & Accounts
 
-Sistem ilk açılışta güvenli PBKDF2 hashlenmiş hazır kullanıcıları otomatik oluşturur:
-
-| Kullanıcı Adı | Parola | Rol | Birim | Yetkiler |
+| Username | Password | Role | Department | Permissions |
 | :--- | :--- | :--- | :--- | :--- |
-| **`admin`** | **`admin123`** | **Yönetici (Admin)** | Bilgi Güvenliği | Tüm zaafiyetleri yönetme, kullanıcı ekleme/çıkarma, zamanlayıcı & SMTP ayarları |
-| **`ahmet.yilmaz`** | **`user123`** | **Analist / Çalışan** | Yazılım Geliştirme | Zaafiyet üstlenme, müdahale notu & yama kanıtı ekleme |
-| **`burak.demir`** | **`user123`** | **Analist / Çalışan** | Sistem Yönetimi | Görev üstlenme, durum güncelleme |
-| **`canan.kaya`** | **`user123`** | **Analist / Çalışan** | Veritabanı | Görev üstlenme, durum güncelleme |
-| **`deniz.arslan`** | **`user123`** | **Analist / Çalışan** | Network / Ağ | Görev üstlenme, durum güncelleme |
-| **`eren.yildiz`** | **`user123`** | **Analist / Çalışan** | DevOps | Görev üstlenme, durum güncelleme |
+| **`admin`** | **`admin123`** | **Administrator** | InfoSec / SOC | Full management, user control, scanner API, SMTP settings |
+| **`ahmet.yilmaz`** | **`user123`** | **Analyst** | Software Dev | Claim vulnerabilities, submit patches & PoC evidence |
+| **`burak.demir`** | **`user123`** | **Analyst** | Systems Admin | Task assignment, status updates |
+| **`canan.kaya`** | **`user123`** | **Analyst** | Database Admin | Task assignment, status updates |
+| **`deniz.arslan`** | **`user123`** | **Analyst** | Network Security | Task assignment, status updates |
+| **`eren.yildiz`** | **`user123`** | **Analyst** | DevOps & Cloud | Task assignment, status updates |
 
 ---
 
-## 🛡️ Öne Çıkan Kurumsal Yetenekler
+<br>
 
-### 1. Canlı OpenVAS / Greenbone Entegrasyonu & Kalıcı Kimlik
-- Greenbone OS 25 / GSAD 27 API ile doğrudan HTTPS oturumu kurulur.
-- Parola kalıcı olarak saklandığı için kullanıcıdan **tekrar tekrar şifre istenmez**. Tek tıkla canlı veriler çekilir.
-- Mükerrer kayıt koruması (*deduplication*) sayesinde mevcut açıklar yinelenmez.
+## 🇹🇷 Türkçe Dokümantasyon
 
-### 2. Otomatik Zaafiyet Zamanlayıcısı (Background Scheduler)
-- Arka planda belirlenen periyotta (5 dk, 15 dk, 30 dk, 1 saat vb.) OpenVAS'ı otomatik sorgular.
-- Yeni bulunan riskleri otomatik olarak sisteme kaydeder.
-- Canlı durum göstergesi, son kontrol zamanı ve bulgu sayısı arayüzden anlık izlenebilir.
-
-### 3. Modern Dark SOC & Minimalist Arayüz
-- Dikkat dağıtıcı yapay metinler ve gereksiz açıklamalar tamamen temizlenmiştir.
-- Kurumsal güvenlik operasyon merkezlerine uygun derin siyah/lacivert palet (`#080c15`), `Plus Jakarta Sans` ve `JetBrains Mono` tipografisi.
-- Üst barda kullanıcı durum ibresi ve güvenli oturum kapatma (**Çıkış Yap**) butonu.
-
-### 4. 8 Sütunlu Standart Zaafiyet Yönetim Tablosu
-1. **Kayıt No** (`VULN-2026-XXXX`)
-2. **Başlık & Hedef IP/Port**
-3. **Seviye** (Kritik / Yüksek / Orta / Düşük)
-4. **Birim** (Sistem, Yazılım, Network, SOC vb.)
-5. **İlgili Kişi** (Sorumlu personel)
-6. **Durum Analizi** (Açık, İnceleniyor, Aksiyon Alındı, Kapatıldı)
-7. **Termin (SLA)**
-8. **Kapanış Tarihi**
+### 📌 Genel Bakış
+**VULNIX**, kurumsal bilgi güvenliği operasyonlarında zafiyet tarama araçlarının (OpenVAS/Greenbone, Nessus vb.) ürettiği bulguları merkezi olarak yönetmek, sorumlu teknik birimlere paylaştırmak ve SLA süreleri içinde kapatılmasını denetlemek için geliştirilmiş **açık kaynaklı ve bağımsız bir Zaafiyet Yönetim Platformudur**.
 
 ---
 
-## 📦 Proje Dizin Yapısı
+### 🛡️ Öne Çıkan Yetenekler
+
+1. **Canlı OpenVAS / Greenbone GSAD 27 API Entegrasyonu**:
+   - GSAD 27 API protokolü ile doğrudan çift yönlü HTTPS senkronizasyonu kurulur.
+   - Kimlik bilgileri kalıcı olarak saklandığı için kullanıcıdan **tekrar tekrar şifre istenmez**; tek tıkla canlı veriler çekilir.
+   - CVSS v3.1 puanı, CVE referansları, tehdit değerlendirmesi ve çözüm adımları otomatik ayrıştırılır.
+
+2. **Otomatik Zaafiyet Zamanlayıcısı (Background Scheduler)**:
+   - Arka planda belirlenen periyotlarda (**5 dk, 15 dk, 30 dk, 1 saat**) OpenVAS'ı otomatik sorgular.
+   - Yeni bulunan riskleri sisteme aktarır; **akıllı mükerrer kayıt koruması (*deduplication*)** sayesinde mevcut açıklar yinelenmez.
+
+3. **Rol Tabanlı Yetkilendirme (RBAC) & Ekip Triage Akışı**:
+   - **Yönetici (Admin)**: Tüm zaafiyetleri görme/düzenleme/silme, yeni personel ekleme (`/users`), zamanlayıcı ve SMTP ayarları.
+   - **Analist / Çalışan**: Birime atanan açıkları filtreleme, tek tıkla **"Görevi Üstlen"** butonuna basarak işi üzerine alma, yama kanıtı/PoC görseli yükleme ve müdahale notu kaydetme.
+
+4. **Standart 8 Sütunlu Kurumsal Zaafiyet Tablosu**:
+   - `Kayıt No` • `Başlık & Hedef IP/Port` • `Seviye` • `Birim` • `İlgili Kişi` • `Durum Analizi` • `Termin (SLA)` • `Kapanış Tarihi`.
+   - SLA termin süresi geçen açıkları anında tespit eden dinamik gecikme uyarıları.
+
+5. **C-Level Yönetici Özeti Raporu**:
+   - Tek tıkla yönetim kurullarına ve denetimlere sunulabilecek, PDF/Baskı formatına tam uyumlu kurumsal risk değerlendirme raporu üretimi (`/reports/executive`).
+
+6. **Çapraz Platform ve Sıfır Bulut Bağımlılığı**:
+   - Dışarıya veri sızdırmaz, tamamen yerel ağda çalışır.
+   - Hem **Kali Linux** hem de **Windows** üzerinde tek tıkla çalışır (`./start.sh` veya `start.bat`).
+
+---
+
+### 📦 Proje Dizin Yapısı
 
 ```
-vulnerability-management-project/
+vulnix/
 ├── app/
 │   ├── main.py                     # FastAPI ana giriş noktası
-│   ├── database.py                 # SQLite şeması ve migration
-│   ├── auth.py                     # PBKDF2 oturum ve kullanıcı yönetimi
-│   ├── scheduler.py                # Arka plan otomatik zamanlayıcı
-│   ├── email_service.py            # SMTP bildirim motoru
+│   ├── database.py                 # SQLite şeması ve migration motoru
+│   ├── auth.py                     # PBKDF2 oturum ve kullanıcı kimlik doğrulama
+│   ├── scheduler.py                # Arka plan otomatik zaafiyet zamanlayıcısı
+│   ├── email_service.py            # SMTP bildirim ve hatırlatma motoru
 │   ├── parsers/
-│   │   ├── api_clients.py          # OpenVAS GSAD 27 & Nessus API istemcisi
+│   │   ├── api_clients.py          # OpenVAS GSAD 27 & Nessus API istemcileri
 │   │   ├── openvas_parser.py       # OpenVAS XML / GMP ayrıştırıcı
 │   │   └── nessus_parser.py        # Nessus XML ayrıştırıcı
-│   ├── routers/                    # Endpoint yönlendiricileri (dashboard, vulns, users...)
-│   └── templates/                  # Modern Jinja2 HTML şablonları
-├── backups/                        # Kararlı sürüm yedekleri (.zip ve klasör)
+│   ├── routers/                    # Web endpoint yönlendiricileri (dashboard, vulns, users...)
+│   └── templates/                  # Modern Dark SOC Jinja2 şablonları
 ├── samples/                        # Örnek tarama raporları
-├── requirements.txt                # Platform bağımsız Python kütüphaneleri
+├── requirements.txt                # Platform bağımsız Python bağımlılıkları
 ├── run.py                          # Çapraz platform başlatıcı
-├── start.sh                        # Linux / Kali Linux başlatıcı script
-├── start.bat                       # Windows başlatıcı script
-└── test_system.py                  # 14 adımlı otomatik doğrulama test paketi
+├── start.sh                        # Linux / Kali Linux başlatıcı betiği
+├── start.bat                       # Windows tek tık başlatıcı betiği
+└── test_system.py                  # 14 adımlı otomatik sistem doğrulama test paketi
 ```
+
+---
+
+## 📄 Lisans
+Bu proje açık kaynaklıdır ve kurumsal güvenlik operasyonlarının geliştirilmesi amacıyla paylaşılmıştır.
