@@ -29,6 +29,19 @@ app.include_router(reports.router)
 app.include_router(settings.router)
 
 
+@app.get("/set-lang/{lang}")
+async def set_language(request: Request, lang: str):
+    target_lang = "tr" if lang.lower() == "tr" else "en"
+    referer = request.headers.get("referer", "/")
+    # Avoid redirect loop if referer was /set-lang
+    if "/set-lang" in referer:
+        referer = "/"
+    from fastapi.responses import RedirectResponse
+    response = RedirectResponse(url=referer, status_code=303)
+    response.set_cookie("vulnix_lang", target_lang, max_age=365 * 24 * 3600, samesite="lax")
+    return response
+
+
 @app.on_event("startup")
 async def on_startup():
     init_db()

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Form, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from app.templates_config import templates
 from app.database import (
     get_db_connection, generate_next_record_no, calculate_severity_from_cvss,
     UPLOAD_DIR
@@ -13,7 +13,6 @@ from datetime import datetime
 from typing import Optional
 
 router = APIRouter(prefix="/vulnerabilities")
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
 
 
 @router.get("", response_class=HTMLResponse)

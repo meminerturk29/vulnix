@@ -6,8 +6,8 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
     <div>
-      <h1 class="text-xl font-bold text-white tracking-tight">Kullanıcı ve Ekip Yönetimi</h1>
-      <p class="text-xs text-slate-400 mt-0.5">Sistem kullanıcıları, rolleri ve müdahale aksiyon takibi.</p>
+      <h1 class="text-xl font-bold text-white tracking-tight">{{ T.users_title }}</h1>
+      <p class="text-xs text-slate-400 mt-0.5">{{ T.users_sub }}</p>
     </div>
   </div>
 
@@ -28,53 +28,62 @@
   <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80 space-y-4">
     <div class="flex items-center gap-2.5 pb-2 border-b border-slate-800/80">
       <i class="fa-solid fa-user-plus text-purple-400 text-sm"></i>
-      <h2 class="text-xs font-bold text-white uppercase tracking-wider">Yeni Kullanıcı Ekle</h2>
+      <h2 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.add_user_title }}</h2>
     </div>
 
     <form method="POST" action="/users/new" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 items-end">
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Kullanıcı Adı *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.login_user }} *</label>
         <input type="text" name="username" required placeholder="mehmet.kaya" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Ad Soyad *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.field_fullname }}</label>
         <input type="text" name="full_name" required placeholder="Mehmet Kaya" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">E-Posta *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.field_email }}</label>
         <input type="email" name="email" required placeholder="mehmet.kaya@sirket.com" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Parola *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.login_pass }} *</label>
         <input type="password" name="password" required placeholder="••••••••" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Sorumlu Birim *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.field_dept }}</label>
         <select name="department" required class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          {% if lang == 'en' %}
+          <option value="System Administration">System Administration</option>
+          <option value="Software Development">Software Development</option>
+          <option value="Network / Infrastructure">Network / Infrastructure</option>
+          <option value="Database Administration">Database Administration</option>
+          <option value="DevOps">DevOps</option>
+          <option value="Cyber Security / SOC">Cyber Security / SOC</option>
+          {% else %}
           <option value="Sistem Yönetimi">Sistem Yönetimi</option>
           <option value="Yazılım Geliştirme">Yazılım Geliştirme</option>
           <option value="Network/Ağ Güvenliği">Network / Ağ Güvenliği</option>
           <option value="Veritabanı Yönetimi">Veritabanı Yönetimi</option>
           <option value="DevOps">DevOps</option>
           <option value="Bilgi Güvenliği / SOC">Bilgi Güvenliği / SOC</option>
+          {% endif %}
         </select>
       </div>
 
       <div>
-        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Rol *</label>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.field_role }}</label>
         <select name="role" required class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
-          <option value="user">Çalışan (Teknik Personel)</option>
-          <option value="admin">Yönetici (Admin)</option>
+          <option value="user">{{ T.role_analyst_opt }}</option>
+          <option value="admin">{{ T.role_admin_opt }}</option>
         </select>
       </div>
 
       <div class="sm:col-span-2 lg:col-span-3 flex justify-end pt-1">
         <button type="submit" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow transition-all">
-          Kullanıcıyı Kaydet
+          {{ T.btn_save_user }}
         </button>
       </div>
     </form>
@@ -83,21 +92,21 @@
   <!-- Users Table -->
   <div class="bg-[#0e1320] rounded-xl border border-slate-800/80 overflow-hidden shadow">
     <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
-      <h3 class="text-xs font-bold text-white uppercase tracking-wider">Kayıtlı Kullanıcılar ({{ users|length }})</h3>
+      <h3 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.reg_users_title }} ({{ users|length }})</h3>
     </div>
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-xs">
         <thead class="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800/80">
           <tr>
-            <th class="p-3">Personel</th>
-            <th class="p-3">Kullanıcı Adı</th>
-            <th class="p-3">Birim</th>
-            <th class="p-3 text-center">Rol</th>
-            <th class="p-3 text-center">Atanan Görev</th>
-            <th class="p-3 text-center">Aksiyon</th>
-            <th class="p-3 text-center">Durum</th>
-            <th class="p-3 text-right">İşlem</th>
+            <th class="p-3">{{ T.col_user }}</th>
+            <th class="p-3">{{ T.login_user }}</th>
+            <th class="p-3">{{ T.col_dept }}</th>
+            <th class="p-3 text-center">{{ T.field_role }}</th>
+            <th class="p-3 text-center">{{ T.col_assigned_tasks }}</th>
+            <th class="p-3 text-center">{{ T.col_actions_done }}</th>
+            <th class="p-3 text-center">{{ T.col_status }}</th>
+            <th class="p-3 text-right">{{ T.col_action }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-800/60 text-slate-300">
@@ -117,11 +126,11 @@
 
             <td class="p-3 font-mono text-cyan-400 whitespace-nowrap">@{{ u.username }}</td>
 
-            <td class="p-3 whitespace-nowrap font-medium text-slate-300">{{ u.department or 'Genel' }}</td>
+            <td class="p-3 whitespace-nowrap font-medium text-slate-300">{{ u.department or ('General' if lang == 'en' else 'Genel') }}</td>
 
             <td class="p-3 text-center whitespace-nowrap">
               <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ 'bg-purple-950 text-purple-300 border border-purple-800' if u.role == 'admin' else 'bg-slate-900 text-slate-300 border border-slate-800' }}">
-                {{ 'Admin' if u.role == 'admin' else 'Çalışan' }}
+                {{ T.role_admin if u.role == 'admin' else T.role_analyst }}
               </span>
             </td>
 
@@ -136,11 +145,11 @@
             <td class="p-3 text-center whitespace-nowrap">
               {% if u.is_active == 1 %}
               <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Aktif
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> {{ 'Active' if lang == 'en' else 'Aktif' }}
               </span>
               {% else %}
               <span class="inline-flex items-center gap-1 text-[11px] text-slate-500">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> Pasif
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> {{ 'Inactive' if lang == 'en' else 'Pasif' }}
               </span>
               {% endif %}
             </td>
@@ -149,18 +158,18 @@
               <div class="inline-flex items-center gap-1.5">
                 {% if u.id != current_user.id %}
                 <form method="POST" action="/users/{{ u.id }}/toggle-active" class="inline">
-                  <button type="submit" title="{{ 'Pasifleştir' if u.is_active == 1 else 'Aktifleştir' }}" class="p-1 rounded bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800">
+                  <button type="submit" title="{{ ('Deactivate' if u.is_active == 1 else 'Activate') if lang == 'en' else ('Pasifleştir' if u.is_active == 1 else 'Aktifleştir') }}" class="p-1 rounded bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800">
                     <i class="fa-solid {{ 'fa-user-slash' if u.is_active == 1 else 'fa-user-check' }} text-xs"></i>
                   </button>
                 </form>
 
-                <form method="POST" action="/users/{{ u.id }}/delete" class="inline" onsubmit="return confirm('Kullanıcı silinsin mi?');">
-                  <button type="submit" title="Sil" class="p-1 rounded bg-slate-900 hover:bg-rose-950 text-rose-400 border border-slate-800">
+                <form method="POST" action="/users/{{ u.id }}/delete" class="inline" onsubmit="return confirm('{{ 'Delete this user?' if lang == 'en' else 'Kullanıcı silinsin mi?' }}');">
+                  <button type="submit" title="{{ T.btn_delete }}" class="p-1 rounded bg-slate-900 hover:bg-rose-950 text-rose-400 border border-slate-800">
                     <i class="fa-solid fa-trash text-xs"></i>
                   </button>
                 </form>
                 {% else %}
-                <span class="text-[10px] text-slate-500">Siz</span>
+                <span class="text-[10px] text-slate-500">{{ 'You' if lang == 'en' else 'Siz' }}</span>
                 {% endif %}
               </div>
             </td>

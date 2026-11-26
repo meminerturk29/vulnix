@@ -46,14 +46,14 @@ def run_tests():
     print("\n[TEST 5] Admin olarak Dashboard erişimi...")
     r = admin_client.get("/")
     assert r.status_code == 200
-    assert "Çalışan Aksiyon Takibi" in r.text
-    print("[OK] Admin Dashboard başarıyla açıldı (Çalışan Aksiyon Takibi mevcut).")
+    assert "Vulnerability Management Dashboard" in r.text or "Zaafiyet Yönetim Paneli" in r.text
+    print("[OK] Admin Dashboard başarıyla açıldı (Vulnerability Management Dashboard mevcut).")
 
     # 6. Admin User Management (/users)
     print("\n[TEST 6] Admin Kullanıcı Yönetimi (/users)...")
     r = admin_client.get("/users")
     assert r.status_code == 200
-    assert "Kullanıcı ve Ekip Yönetimi" in r.text
+    assert "User & Team Management" in r.text or "Kullanıcı ve Ekip Yönetimi" in r.text
     print("[OK] Kullanıcı yönetim paneli görüntülendi.")
 
     # 7. Add New User
@@ -132,7 +132,7 @@ def run_tests():
     print("\n[TEST 12] Admin Dashboard'da çalışan aksiyonunu görme...")
     r = admin_client.get("/")
     assert "OpenSSL paketi güncellendi" in r.text
-    assert "Ahmet Yılmaz" in r.text
+    assert "Selin Bulut" in r.text
     print("[OK] Admin paneli çalışanın aksiyonunu canlı akışta gösteriyor!")
 
     # 13. OpenVAS XML Upload Test
@@ -152,10 +152,33 @@ def run_tests():
     print("\n[TEST 14] Yönetici Özeti Raporu (/reports/executive)...")
     r = admin_client.get("/reports/executive")
     assert r.status_code == 200
-    assert "Yönetici Özeti" in r.text
+    assert "Executive Summary" in r.text or "Yönetici Özeti" in r.text
     print("[OK] Yönetici Raporu (C-Level) başarıyla render edildi.")
 
-    # 15. Clean up test vulnerabilities to ensure database remains 100% clean
+    # 15. Bilingual Language Switching Test (EN & TR with Flags)
+    print("\n[TEST 15] Çift Dilli Dil Değiştirme ve Bayrak Testi (/set-lang)...")
+    # Switch to Turkish
+    r_tr = admin_client.get("/set-lang/tr", follow_redirects=False)
+    assert r_tr.status_code == 303
+    assert r_tr.cookies.get("vulnix_lang") == "tr"
+    
+    # Request dashboard with TR cookie
+    admin_tr_client = TestClient(app, cookies={SESSION_COOKIE_NAME: admin_session, "vulnix_lang": "tr"})
+    page_tr = admin_tr_client.get("/")
+    assert page_tr.status_code == 200
+    assert "Zaafiyet Listesi" in page_tr.text
+    assert "🇹🇷" in page_tr.text and "🇬🇧" in page_tr.text
+    print("[OK] Türkçe diline geçiş ve bayraklar başarıyla doğrulandı.")
+
+    # Switch back to English
+    admin_en_client = TestClient(app, cookies={SESSION_COOKIE_NAME: admin_session, "vulnix_lang": "en"})
+    page_en = admin_en_client.get("/")
+    assert page_en.status_code == 200
+    assert "Vulnerability Matrix" in page_en.text
+    assert "🇬🇧" in page_en.text and "🇹🇷" in page_en.text
+    print("[OK] İngilizce diline geçiş ve bayraklar başarıyla doğrulandı.")
+
+    # 16. Clean up test vulnerabilities to ensure database remains 100% clean
     clear_all_vulnerabilities()
     print("[OK] Test sonrasi veritabani sifirlandi (0 zaafiyet durumu saglandi).")
 

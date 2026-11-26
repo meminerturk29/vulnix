@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="{{ lang }}" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page_title }} - VULNIX</title>
+  <title>{{ page_title }} - {{ T.brand_name }}</title>
   <link rel="icon" type="image/svg+xml" href="/static/img/vulnix_logo.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,7 +15,21 @@
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex items-center justify-center p-4 relative antialiased">
 
-  <div class="max-w-sm w-full space-y-6 relative z-10">
+  <div class="max-w-sm w-full space-y-5 relative z-10">
+
+    <!-- Top Language Switcher -->
+    <div class="flex justify-center">
+      <div class="flex items-center bg-[#0e1320] border border-slate-800 rounded-lg p-0.5 shadow-md">
+        <a href="/set-lang/en" title="English" class="flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-all {{ 'bg-cyan-600/30 text-white border border-cyan-500/50 font-bold shadow' if lang == 'en' else 'text-slate-400 hover:text-white' }}">
+          <span class="text-sm">🇬🇧</span>
+          <span class="font-mono text-[11px]">EN</span>
+        </a>
+        <a href="/set-lang/tr" title="Türkçe" class="flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-all {{ 'bg-cyan-600/30 text-white border border-cyan-500/50 font-bold shadow' if lang == 'tr' else 'text-slate-400 hover:text-white' }}">
+          <span class="text-sm">🇹🇷</span>
+          <span class="font-mono text-[11px]">TR</span>
+        </a>
+      </div>
+    </div>
 
     <!-- Brand Header -->
     <div class="text-center space-y-2">
@@ -24,17 +38,17 @@
       </div>
       <div>
         <h1 class="text-2xl font-black text-white tracking-wider flex items-center justify-center gap-2">
-          <span>VULNIX</span>
-          <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">SEC</span>
+          <span>{{ T.brand_name }}</span>
+          <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">{{ T.brand_tag }}</span>
         </h1>
-        <p class="text-[10px] font-mono text-slate-400 tracking-widest uppercase mt-0.5" lang="en">SECURITY OPERATIONS</p>
+        <p class="text-[10px] font-mono text-slate-400 tracking-widest uppercase mt-0.5">{{ T.brand_sub }}</p>
       </div>
     </div>
 
     <!-- Login Card -->
     <div class="bg-[#0e1320] border border-slate-800/80 rounded-2xl p-6 shadow-xl space-y-4">
-      <div>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Giriş Yap</h2>
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">{{ T.login_heading }}</h2>
       </div>
 
       {% if msg %}
@@ -55,17 +69,17 @@
         <input type="hidden" name="next" value="{{ next }}">
 
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Kullanıcı Adı</label>
-          <input type="text" name="username" required value="{{ entered_username if entered_username else '' }}" placeholder="Kullanıcı adı" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.login_user }}</label>
+          <input type="text" name="username" required value="{{ entered_username if entered_username else '' }}" placeholder="{{ T.login_user }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Parola</label>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ T.login_pass }}</label>
           <input type="password" name="password" required placeholder="••••••••••••" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
         </div>
 
         <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow transition-all">
-          Giriş Yap
+          {{ T.login_btn }}
         </button>
       </form>
     </div>

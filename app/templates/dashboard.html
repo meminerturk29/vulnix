@@ -6,18 +6,18 @@
   <!-- Overview Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
     <div>
-      <h1 class="text-xl font-bold text-white tracking-tight">Güvenlik ve Zaafiyet Operasyonları</h1>
-      <p class="text-xs text-slate-400 mt-0.5">Tespit edilen güvenlik açıkları, risk skorları ve müdahale takibi.</p>
+      <h1 class="text-xl font-bold text-white tracking-tight">{{ T.dash_title }}</h1>
+      <p class="text-xs text-slate-400 mt-0.5">{{ T.dash_sub }}</p>
     </div>
 
     <div class="flex items-center gap-2.5">
       <a href="/vulnerabilities/new" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs shadow-md transition-all">
         <i class="fa-solid fa-plus"></i>
-        <span>Yeni Zaafiyet</span>
+        <span>{{ T.dash_new_btn }}</span>
       </a>
       <a href="/reports/executive" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-semibold text-xs transition-all">
         <i class="fa-solid fa-file-lines text-purple-400"></i>
-        <span>Yönetici Özeti</span>
+        <span>{{ T.dash_exec_btn }}</span>
       </a>
     </div>
   </div>
@@ -30,23 +30,23 @@
         <i class="fa-solid fa-satellite-dish"></i>
       </div>
       <div>
-        <h3 class="text-sm font-bold text-white">Sistemde Kayıtlı Zaafiyet Bulunmuyor</h3>
-        <p class="text-xs text-slate-400">OpenVAS üzerinden canlı tarama verilerini hemen çekebilirsiniz.</p>
+        <h3 class="text-sm font-bold text-white">{{ T.dash_empty_title }}</h3>
+        <p class="text-xs text-slate-400">{{ T.dash_empty_sub }}</p>
       </div>
     </div>
     <a href="/import" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow transition-all shrink-0">
       <i class="fa-solid fa-arrows-rotate"></i>
-      <span>OpenVAS'tan Verileri Çek</span>
+      <span>{{ T.dash_empty_btn }}</span>
     </a>
   </div>
   {% endif %}
 
   <!-- KPI Statistics Cards -->
   <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
-    <!-- Toplam -->
+    <!-- Total -->
     <div class="bg-[#0e1320] p-4 rounded-xl border border-slate-800/80 flex items-center justify-between">
       <div>
-        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Toplam Zaafiyet</span>
+        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{{ T.kpi_total }}</span>
         <div class="text-2xl font-black text-white mt-0.5">{{ total_vulns }}</div>
       </div>
       <div class="w-10 h-10 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-slate-300 text-base">
@@ -54,10 +54,10 @@
       </div>
     </div>
 
-    <!-- Kritik -->
+    <!-- Critical -->
     <div class="bg-[#0e1320] p-4 rounded-xl border border-red-950/60 flex items-center justify-between">
       <div>
-        <span class="text-[11px] font-semibold text-red-400 uppercase tracking-wider">Kritik</span>
+        <span class="text-[11px] font-semibold text-red-400 uppercase tracking-wider">{{ T.kpi_critical }}</span>
         <div class="text-2xl font-black text-red-500 mt-0.5">{{ sev_counts['Kritik'] }}</div>
       </div>
       <div class="w-10 h-10 rounded-lg bg-red-950/60 border border-red-800/40 flex items-center justify-center text-red-400 text-base">
@@ -65,10 +65,10 @@
       </div>
     </div>
 
-    <!-- Yüksek -->
+    <!-- High -->
     <div class="bg-[#0e1320] p-4 rounded-xl border border-orange-950/60 flex items-center justify-between">
       <div>
-        <span class="text-[11px] font-semibold text-orange-400 uppercase tracking-wider">Yüksek</span>
+        <span class="text-[11px] font-semibold text-orange-400 uppercase tracking-wider">{{ T.kpi_high }}</span>
         <div class="text-2xl font-black text-orange-400 mt-0.5">{{ sev_counts['Yüksek'] }}</div>
       </div>
       <div class="w-10 h-10 rounded-lg bg-orange-950/60 border border-orange-800/40 flex items-center justify-center text-orange-400 text-base">
@@ -76,10 +76,10 @@
       </div>
     </div>
 
-    <!-- Orta & Düşük -->
+    <!-- Medium & Low -->
     <div class="bg-[#0e1320] p-4 rounded-xl border border-amber-950/60 flex items-center justify-between">
       <div>
-        <span class="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">Orta & Düşük</span>
+        <span class="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">{{ T.kpi_med_low }}</span>
         <div class="text-2xl font-black text-amber-400 mt-0.5">{{ sev_counts['Orta'] + sev_counts['Düşük'] }}</div>
       </div>
       <div class="w-10 h-10 rounded-lg bg-amber-950/60 border border-amber-800/40 flex items-center justify-center text-amber-400 text-base">
@@ -87,10 +87,10 @@
       </div>
     </div>
 
-    <!-- Kapatılan -->
+    <!-- Remediated -->
     <div class="bg-[#0e1320] p-4 rounded-xl border border-emerald-950/60 flex items-center justify-between col-span-2 lg:col-span-1">
       <div>
-        <span class="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">Giderilen</span>
+        <span class="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">{{ T.kpi_remediated }}</span>
         <div class="text-2xl font-black text-emerald-400 mt-0.5">{{ closed_vulns }}</div>
       </div>
       <div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-800/40 flex items-center justify-center text-emerald-400 text-base">
@@ -104,10 +104,10 @@
   <div class="p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 text-red-200 flex items-center justify-between text-xs">
     <div class="flex items-center gap-2.5">
       <i class="fa-solid fa-clock-rotate-left text-red-400 text-base"></i>
-      <span><strong>{{ overdue_count }} adet</strong> zaafiyetin SLA termin süresi geçmiş durumda.</span>
+      <span><strong>{{ overdue_count }}</strong> {{ T.sla_breach_alert }}</span>
     </div>
     <a href="/vulnerabilities?status=Açık" class="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold">
-      İncele &rarr;
+      {{ T.sla_breach_review }} &rarr;
     </a>
   </div>
   {% endif %}
@@ -125,9 +125,9 @@
         <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-user-shield text-cyan-400"></i>
-            <span>Üzerime Atanan Açıklar</span>
+            <span>{{ T.my_assigned_title }}</span>
           </h2>
-          <a href="/vulnerabilities?my_only=true" class="text-xs text-cyan-400 hover:underline">Tümü &rarr;</a>
+          <a href="/vulnerabilities?my_only=true" class="text-xs text-cyan-400 hover:underline">{{ T.my_assigned_all }} &rarr;</a>
         </div>
 
         <div class="space-y-2.5">
@@ -139,19 +139,19 @@
                 <a href="/vulnerabilities/{{ t.id }}" class="text-xs font-semibold text-white hover:text-cyan-400 truncate block">
                   {{ t.title }}
                 </a>
-                <span class="text-[11px] text-slate-400">Termin: {{ t.due_date or 'Belirtilmedi' }}</span>
+                <span class="text-[11px] text-slate-400">{{ T.remediation_due }}: {{ t.due_date or '-' }}</span>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <span class="px-2 py-0.5 rounded text-[10px] font-bold
-                {{ 'bg-red-950 text-red-400 border border-red-800' if t.severity == 'Kritik' else
-                   'bg-orange-950 text-orange-400 border border-orange-800' if t.severity == 'Yüksek' else
-                   'bg-amber-950 text-amber-400 border border-amber-800' if t.severity == 'Orta' else
+                {{ 'bg-red-950 text-red-400 border border-red-800' if t.severity in ['Kritik', 'Critical'] else
+                   'bg-orange-950 text-orange-400 border border-orange-800' if t.severity in ['Yüksek', 'High'] else
+                   'bg-amber-950 text-amber-400 border border-amber-800' if t.severity in ['Orta', 'Medium'] else
                    'bg-blue-950 text-blue-400 border border-blue-800' }}">
-                {{ t.severity }}
+                {{ t.severity|loc_sev }}
               </span>
               <a href="/vulnerabilities/{{ t.id }}" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs">
-                Müdahale &rarr;
+                {{ T.btn_take_action }} &rarr;
               </a>
             </div>
           </div>
@@ -160,17 +160,17 @@
       </div>
       {% endif %}
 
-      <!-- Recent Employee Actions Feed -->
+      <!-- Recent Actions Feed -->
       {% set actions_feed = recent_activities if recent_activities is defined else (recent_actions if recent_actions is defined else []) %}
       <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80">
         <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
           <div>
             <h2 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-list-check text-cyan-400"></i>
-              <span>Çalışan Aksiyon Takibi ve Müdahale Günlüğü</span>
+              <span>{{ T.action_feed_title }}</span>
             </h2>
           </div>
-          <span class="text-[11px] text-slate-400 font-mono">{{ actions_feed|length }} Kayıt</span>
+          <span class="text-[11px] text-slate-400 font-mono">{{ actions_feed|length }} {{ T.records }}</span>
         </div>
 
         {% if actions_feed %}
@@ -185,10 +185,10 @@
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-xs font-bold text-white">{{ a.author_name }}</span>
                   <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold
-                    {{ 'bg-emerald-950 text-emerald-400 border border-emerald-800' if a.action_type in ['Kapatıldı', 'Yama Uygulandı'] else
-                       'bg-cyan-950 text-cyan-400 border border-cyan-800' if 'Üstlendi' in a.action_type else
+                    {{ 'bg-emerald-950 text-emerald-400 border border-emerald-800' if a.action_type in ['Kapatıldı', 'Yama Uygulandı', 'Closed', 'Patched'] else
+                       'bg-cyan-950 text-cyan-400 border border-cyan-800' if 'Üstlendi' in a.action_type or 'Claimed' in a.action_type else
                        'bg-purple-950 text-purple-300 border border-purple-800' }}">
-                    {{ a.action_type }}
+                    {{ a.action_type|loc_status }}
                   </span>
                   <a href="/vulnerabilities/{{ a.vuln_id }}" class="text-xs text-slate-400 hover:text-cyan-400 transition-colors">
                     {{ a.record_no }}
@@ -205,7 +205,7 @@
         </div>
         {% else %}
         <div class="py-8 text-center text-slate-500 text-xs">
-          Henüz kaydedilmiş bir müdahale aksiyonu bulunmuyor.
+          {{ T.action_feed_empty }}
         </div>
         {% endif %}
       </div>
@@ -218,36 +218,36 @@
       <!-- Severity Donut Chart -->
       <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80">
         <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80">
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Risk Dağılımı</h3>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.chart_risk_dist }}</h3>
           <span class="text-[10px] font-mono text-slate-500">CVSS v3.1</span>
         </div>
         <div class="h-48 flex items-center justify-center relative">
           <canvas id="severityChart"></canvas>
         </div>
         <div class="grid grid-cols-4 gap-1 mt-3 pt-3 border-t border-slate-800/80 text-center text-[11px]">
-          <div><span class="font-bold text-red-500 block">{{ sev_counts['Kritik'] }}</span><span class="text-slate-500 text-[10px]">Kritik</span></div>
-          <div><span class="font-bold text-orange-500 block">{{ sev_counts['Yüksek'] }}</span><span class="text-slate-500 text-[10px]">Yüksek</span></div>
-          <div><span class="font-bold text-amber-500 block">{{ sev_counts['Orta'] }}</span><span class="text-slate-500 text-[10px]">Orta</span></div>
-          <div><span class="font-bold text-blue-500 block">{{ sev_counts['Düşük'] }}</span><span class="text-slate-500 text-[10px]">Düşük</span></div>
+          <div><span class="font-bold text-red-500 block">{{ sev_counts['Kritik'] }}</span><span class="text-slate-500 text-[10px]">{{ 'Critical'|loc_sev }}</span></div>
+          <div><span class="font-bold text-orange-500 block">{{ sev_counts['Yüksek'] }}</span><span class="text-slate-500 text-[10px]">{{ 'High'|loc_sev }}</span></div>
+          <div><span class="font-bold text-amber-500 block">{{ sev_counts['Orta'] }}</span><span class="text-slate-500 text-[10px]">{{ 'Medium'|loc_sev }}</span></div>
+          <div><span class="font-bold text-blue-500 block">{{ sev_counts['Düşük'] }}</span><span class="text-slate-500 text-[10px]">{{ 'Low'|loc_sev }}</span></div>
         </div>
       </div>
 
       <!-- Department Workload Chart -->
       <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80">
         <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80">
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Birim Dağılımı</h3>
-          <span class="text-[10px] font-mono text-slate-500">Görev Yükü</span>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.chart_dept_dist }}</h3>
+          <span class="text-[10px] font-mono text-slate-500">{{ T.chart_workload }}</span>
         </div>
         <div class="h-44 flex items-center justify-center">
           <canvas id="deptChart"></canvas>
         </div>
       </div>
 
-      <!-- Ekip Üyeleri -->
+      <!-- Team Members -->
       <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80">
         <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80">
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Ekip Durumu</h3>
-          <a href="/users" class="text-[11px] text-cyan-400 hover:underline">Tümü &rarr;</a>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.team_status_title }}</h3>
+          <a href="/users" class="text-[11px] text-cyan-400 hover:underline">{{ T.view_all }} &rarr;</a>
         </div>
         <div class="space-y-2">
           {% for m in team_members[:4] %}
@@ -258,12 +258,12 @@
               </div>
               <div>
                 <span class="font-semibold text-white block leading-tight">{{ m.full_name }}</span>
-                <span class="text-[10px] text-slate-500">{{ m.department or 'Genel' }}</span>
+                <span class="text-[10px] text-slate-500">{{ m.department or 'General' }}</span>
               </div>
             </div>
             <div class="text-right font-mono text-[11px]">
               <span class="text-amber-400 font-bold">{{ m.open_tasks }}</span>
-              <span class="text-slate-500 text-[10px]">açık</span>
+              <span class="text-slate-500 text-[10px]">{{ 'open' if lang == 'en' else 'açık' }}</span>
             </div>
           </div>
           {% endfor %}
@@ -284,7 +284,7 @@
   new Chart(ctxSev, {
     type: 'doughnut',
     data: {
-      labels: ['Kritik', 'Yüksek', 'Orta', 'Düşük'],
+      labels: ['{{ "Critical"|loc_sev }}', '{{ "High"|loc_sev }}', '{{ "Medium"|loc_sev }}', '{{ "Low"|loc_sev }}'],
       datasets: [{
         data: [
           {{ sev_counts['Kritik'] }},
@@ -312,7 +312,7 @@
     data: {
       labels: [{% for d in department_stats %}'{{ d["department"] }}',{% endfor %}],
       datasets: [{
-        label: 'Açık Sayısı',
+        label: '{{ "Tasks" if lang == "en" else "Açık Sayısı" }}',
         data: [{% for d in department_stats %}{{ d["count"] }},{% endfor %}],
         backgroundColor: '#06b6d4',
         borderRadius: 4

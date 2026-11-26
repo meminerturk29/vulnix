@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="{{ lang }}" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page_title }} - VULNIX</title>
+  <title>{{ page_title }} - {{ T.brand_name }}</title>
   <link rel="icon" type="image/svg+xml" href="/static/img/vulnix_logo.svg">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -34,10 +34,10 @@
       </div>
       <div class="min-w-0">
         <h1 class="text-sm font-extrabold text-white tracking-wider flex items-center gap-1.5">
-          <span>VULNIX</span>
-          <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">SEC</span>
+          <span>{{ T.brand_name }}</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">{{ T.brand_tag }}</span>
         </h1>
-        <p class="text-[9px] text-slate-400 font-mono tracking-widest leading-tight truncate" lang="en">SECURITY OPERATIONS</p>
+        <p class="text-[9px] text-slate-400 font-mono tracking-widest leading-tight truncate">{{ T.brand_sub }}</p>
       </div>
     </a>
 
@@ -51,9 +51,9 @@
         <div class="text-xs font-bold text-white truncate">{{ current_user.full_name }}</div>
         <div class="flex items-center gap-1.5 mt-0.5">
           <span class="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase {{ 'bg-purple-950/80 text-purple-300 border border-purple-800/50' if current_user.role == 'admin' else 'bg-cyan-950/80 text-cyan-300 border border-cyan-800/50' }}">
-            {{ 'Yönetici' if current_user.role == 'admin' else 'Analist' }}
+            {{ T.role_admin if current_user.role == 'admin' else T.role_analyst }}
           </span>
-          <span class="text-[10px] text-slate-400 truncate">{{ current_user.department or 'Siber Güvenlik' }}</span>
+          <span class="text-[10px] text-slate-400 truncate">{{ current_user.department or 'Cyber Security' }}</span>
         </div>
       </div>
     </div>
@@ -61,51 +61,51 @@
 
     <!-- Navigation links -->
     <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
-      <div class="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Navigasyon</div>
+      <div class="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">{{ T.nav_heading }}</div>
       
       <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/' else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-chart-pie w-4 text-center"></i>
-        <span>Dashboard</span>
+        <span>{{ T.nav_dashboard }}</span>
       </a>
 
       <a href="/vulnerabilities" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/vulnerabilities' and 'my_only=true' not in request.url.query else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-table-list w-4 text-center"></i>
-        <span>Zaafiyet Listesi</span>
+        <span>{{ T.nav_vulns }}</span>
       </a>
 
       <a href="/vulnerabilities?my_only=true" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if 'my_only=true' in request.url.query else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-user-check w-4 text-center"></i>
-        <span>Görevlerim</span>
+        <span>{{ T.nav_my_tasks }}</span>
       </a>
 
       <a href="/vulnerabilities/new" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/vulnerabilities/new' else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-circle-plus w-4 text-center"></i>
-        <span>Yeni Zaafiyet</span>
+        <span>{{ T.nav_new_vuln }}</span>
       </a>
 
-      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Entegrasyon</div>
+      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">{{ T.nav_integrations }}</div>
 
       <a href="/import" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path.startswith('/import') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-satellite-dish w-4 text-center"></i>
-        <span>OpenVAS Senkronizasyon</span>
+        <span>{{ T.nav_openvas }}</span>
       </a>
 
       <a href="/reports/executive" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path.startswith('/reports') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-file-waveform w-4 text-center"></i>
-        <span>Yönetici Raporu</span>
+        <span>{{ T.nav_reports }}</span>
       </a>
 
       {% if current_user and current_user.role == 'admin' %}
-      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-purple-400 uppercase tracking-wider">Yönetim</div>
+      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-purple-400 uppercase tracking-wider">{{ T.nav_admin }}</div>
 
       <a href="/users" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-purple-950/60 text-purple-300 border border-purple-800/50' if request.url.path.startswith('/users') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-users-gear w-4 text-center"></i>
-        <span>Kullanıcı Yönetimi</span>
+        <span>{{ T.nav_users }}</span>
       </a>
 
       <a href="/settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-purple-950/60 text-purple-300 border border-purple-800/50' if request.url.path.startswith('/settings') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
         <i class="fa-solid fa-sliders w-4 text-center"></i>
-        <span>Sistem Ayarları</span>
+        <span>{{ T.nav_settings }}</span>
       </a>
       {% endif %}
     </nav>
@@ -114,7 +114,7 @@
     <div class="p-3 border-t border-slate-800/80 bg-[#080c15]">
       <a href="/logout" class="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-rose-950/50 text-slate-400 hover:text-rose-300 border border-slate-800/80 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        <span>Çıkış Yap</span>
+        <span>{{ T.btn_logout }}</span>
       </a>
     </div>
   </aside>
@@ -128,16 +128,29 @@
       </div>
 
       <div class="flex items-center gap-3">
+        <!-- Quick Actions -->
         <a href="/import" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all">
           <i class="fa-solid fa-arrows-rotate text-cyan-400"></i>
-          <span>OpenVAS Senkron</span>
+          <span>{{ T.quick_openvas }}</span>
         </a>
         <a href="/vulnerabilities/new" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm transition-all">
           <i class="fa-solid fa-plus"></i>
-          <span>Zaafiyet Ekle</span>
+          <span>{{ T.quick_add_vuln }}</span>
         </a>
 
-        <!-- Kullanıcı Durum İbresi & Çıkış Yap / Giriş Yap -->
+        <!-- Language Switcher: 🇬🇧 EN / 🇹🇷 TR -->
+        <div class="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 shadow-sm ml-1">
+          <a href="/set-lang/en" title="English" class="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-all {{ 'bg-cyan-600/30 text-white border border-cyan-500/50 font-bold shadow' if lang == 'en' else 'text-slate-400 hover:text-white' }}">
+            <span class="text-sm">🇬🇧</span>
+            <span class="font-mono text-[11px]">EN</span>
+          </a>
+          <a href="/set-lang/tr" title="Türkçe" class="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-all {{ 'bg-cyan-600/30 text-white border border-cyan-500/50 font-bold shadow' if lang == 'tr' else 'text-slate-400 hover:text-white' }}">
+            <span class="text-sm">🇹🇷</span>
+            <span class="font-mono text-[11px]">TR</span>
+          </a>
+        </div>
+
+        <!-- Divider -->
         <div class="h-6 w-px bg-slate-800 mx-1"></div>
 
         {% if current_user %}
@@ -149,20 +162,20 @@
             <div class="text-left hidden md:block">
               <span class="text-xs font-bold text-white block leading-none truncate max-w-[120px]">{{ current_user.full_name }}</span>
               <span class="text-[9px] font-mono {{ 'text-purple-400' if current_user.role == 'admin' else 'text-cyan-400' }} leading-none">
-                {{ 'Yönetici' if current_user.role == 'admin' else 'Analist' }}
+                {{ T.role_admin if current_user.role == 'admin' else T.role_analyst }}
               </span>
             </div>
           </div>
 
-          <a href="/logout" title="Sistemden Güvenli Çıkış Yap" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 text-xs font-semibold shadow-sm transition-all">
+          <a href="/logout" title="{{ T.btn_logout }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 text-xs font-semibold shadow-sm transition-all">
             <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span class="hidden sm:inline">Çıkış Yap</span>
+            <span class="hidden sm:inline">{{ T.btn_logout }}</span>
           </a>
         </div>
         {% else %}
         <a href="/login" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow transition-all">
           <i class="fa-solid fa-right-to-bracket"></i>
-          <span>Giriş Yap</span>
+          <span>{{ T.btn_login }}</span>
         </a>
         {% endif %}
       </div>

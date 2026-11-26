@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from app.templates_config import templates
 from app.database import get_db_connection, DB_PATH
 from app.auth import get_current_user
 from app.email_service import send_email
@@ -9,7 +9,6 @@ import platform
 import sys
 
 router = APIRouter(prefix="/settings")
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
 
 
 @router.get("", response_class=HTMLResponse)

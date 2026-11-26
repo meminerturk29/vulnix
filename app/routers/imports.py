@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Form, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from app.templates_config import templates
 from app.database import get_db_connection, generate_next_record_no, clear_all_vulnerabilities
 from app.auth import get_current_user
 from app.parsers.openvas_parser import parse_openvas_xml, parse_generic_json
@@ -10,7 +10,6 @@ from datetime import datetime
 import os
 
 router = APIRouter(prefix="/import")
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
 SAMPLES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "samples")
 
 

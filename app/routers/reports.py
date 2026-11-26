@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from app.templates_config import templates
 from app.database import get_db_connection
 from app.auth import get_current_user
 import os
 from datetime import datetime
 
 router = APIRouter(prefix="/reports")
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
 
 
 @router.get("/executive", response_class=HTMLResponse)
