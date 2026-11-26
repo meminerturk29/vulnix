@@ -26,7 +26,7 @@ async def import_page(request: Request, msg: str = None, count: int = 0, error: 
     conn.close()
 
     return templates.TemplateResponse(request=request, name="import.html", context={
-        "page_title": "OpenVAS / Greenbone Tarama Senkronizasyonu",
+        "page_title": "OpenVAS Scanner Sync",
         "current_user": current_user,
         "settings": settings,
         "msg": msg,

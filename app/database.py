@@ -217,6 +217,6 @@ def seed_users(conn: sqlite3.Connection):
     cursor.execute("""
         INSERT OR IGNORE INTO users (username, password_hash, full_name, email, role, department, is_active, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'admin', ?, 1, ?, ?)
-    """, ("admin", _hash_pw("admin123"), "Sistem Yöneticisi (Admin)", "admin@sirket.com", "Bilgi Güvenliği / SOC", now_str, now_str))
+    """, ("admin", _hash_pw("admin123"), "System Administrator (Admin)", "admin@vulnix.local", "Cyber Security / SOC", now_str, now_str))
 
     conn.commit()

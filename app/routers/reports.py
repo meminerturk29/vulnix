@@ -85,7 +85,7 @@ async def executive_report(request: Request):
     risk_index = round(min(100.0, (sev_counts["Kritik"] * 25 + sev_counts["Yüksek"] * 10 + sev_counts["Orta"] * 3) / max(1, total_vulns) * 10), 1)
 
     return templates.TemplateResponse(request=request, name="executive_report.html", context={
-        "page_title": "Yönetici Özeti & Zaafiyet Değerlendirme Raporu",
+        "page_title": "Executive Summary & Risk Report",
         "current_user": current_user,
         "company_name": company_name,
         "report_date": datetime.now().strftime("%d.%m.%Y"),

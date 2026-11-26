@@ -604,6 +604,64 @@ DEPARTMENT_MAP = {
 }
 
 
+PAGE_TITLE_MAP = {
+    "en": {
+        "VMS Yönetici & Operasyon Dashboard": "Security Operations Dashboard",
+        "Güvenlik Operasyonları Paneli": "Security Operations Dashboard",
+        "Security Operations Dashboard": "Security Operations Dashboard",
+        "Zaafiyet Yönetim Tablosu": "Vulnerability Management Matrix",
+        "Vulnerability Management Matrix": "Vulnerability Management Matrix",
+        "OpenVAS / Greenbone Tarama Senkronizasyonu": "OpenVAS Scanner Sync",
+        "OpenVAS Scanner Sync": "OpenVAS Scanner Sync",
+        "Yönetici Özeti & Zaafiyet Değerlendirme Raporu": "Executive Summary & Risk Report",
+        "Executive Summary & Risk Report": "Executive Summary & Risk Report",
+        "Sistem ve SMTP E-Posta Ayarları": "System & SMTP Settings",
+        "System & SMTP Settings": "System & SMTP Settings",
+        "Kullanıcı ve Ekip Yönetimi": "User & Team Management",
+        "User & Team Management": "User & Team Management",
+        "Sisteme Giriş Yap": "Sign In",
+        "Giriş Yap": "Sign In",
+        "Sign In": "Sign In",
+        "Yeni Zaafiyet Kaydı Ekle": "New Vulnerability Record",
+        "New Vulnerability Record": "New Vulnerability Record",
+    },
+    "tr": {
+        "Security Operations Dashboard": "Güvenlik Operasyonları Paneli",
+        "VMS Yönetici & Operasyon Dashboard": "Güvenlik Operasyonları Paneli",
+        "Güvenlik Operasyonları Paneli": "Güvenlik Operasyonları Paneli",
+        "Vulnerability Management Matrix": "Zaafiyet Yönetim Tablosu",
+        "Zaafiyet Yönetim Tablosu": "Zaafiyet Yönetim Tablosu",
+        "OpenVAS Scanner Sync": "OpenVAS Senkronizasyonu",
+        "OpenVAS / Greenbone Tarama Senkronizasyonu": "OpenVAS Senkronizasyonu",
+        "Executive Summary & Risk Report": "Yönetici Özeti & Zaafiyet Raporu",
+        "Yönetici Özeti & Zaafiyet Değerlendirme Raporu": "Yönetici Özeti & Zaafiyet Raporu",
+        "System & SMTP Settings": "Sistem ve SMTP Ayarları",
+        "Sistem ve SMTP E-Posta Ayarları": "Sistem ve SMTP Ayarları",
+        "User & Team Management": "Kullanıcı ve Ekip Yönetimi",
+        "Kullanıcı ve Ekip Yönetimi": "Kullanıcı ve Ekip Yönetimi",
+        "Sign In": "Sisteme Giriş Yap",
+        "Sisteme Giriş Yap": "Sisteme Giriş Yap",
+        "New Vulnerability Record": "Yeni Zaafiyet Kaydı Ekle",
+        "Yeni Zaafiyet Kaydı Ekle": "Yeni Zaafiyet Kaydı Ekle",
+    }
+}
+
+USER_NAME_MAP = {
+    "en": {
+        "Sistem Yöneticisi (Admin)": "System Administrator (Admin)",
+        "Sistem Yöneticisi": "System Administrator",
+        "System Administrator (Admin)": "System Administrator (Admin)",
+        "System Administrator": "System Administrator",
+    },
+    "tr": {
+        "System Administrator (Admin)": "Sistem Yöneticisi (Admin)",
+        "System Administrator": "Sistem Yöneticisi",
+        "Sistem Yöneticisi (Admin)": "Sistem Yöneticisi (Admin)",
+        "Sistem Yöneticisi": "Sistem Yöneticisi",
+    }
+}
+
+
 def get_current_lang(request) -> str:
     """Reads language from cookie 'vulnix_lang', defaults to 'en'."""
     lang = request.cookies.get("vulnix_lang", "en").lower()
@@ -626,6 +684,20 @@ def localize_department(val: str, lang: str = "en") -> str:
     return DEPARTMENT_MAP.get(lang, {}).get(val, val)
 
 
+def localize_page_title(val: str, lang: str = "en") -> str:
+    if not val:
+        return ""
+    if lang == "en" and val.startswith("Düzenle:"):
+        return val.replace("Düzenle:", "Edit:")
+    elif lang == "tr" and val.startswith("Edit:"):
+        return val.replace("Edit:", "Düzenle:")
+    return PAGE_TITLE_MAP.get(lang, {}).get(val, val)
+
+
+def localize_user_name(val: str, lang: str = "en") -> str:
+    return USER_NAME_MAP.get(lang, {}).get(val, val)
+
+
 def i18n_context_processor(request) -> Dict[str, Any]:
     """Injected automatically into all Jinja2 templates."""
     lang = get_current_lang(request)
@@ -636,4 +708,6 @@ def i18n_context_processor(request) -> Dict[str, Any]:
         "loc_sev": lambda s: localize_severity(s, lang),
         "loc_status": lambda s: localize_status(s, lang),
         "loc_dept": lambda s: localize_department(s, lang),
+        "loc_title": lambda s: localize_page_title(s, lang),
+        "loc_user": lambda s: localize_user_name(s, lang),
     }

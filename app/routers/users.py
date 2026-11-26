@@ -35,7 +35,7 @@ async def list_users(request: Request, msg: str = None, error: str = None):
     conn.close()
 
     return templates.TemplateResponse(request=request, name="users_list.html", context={
-        "page_title": "Kullanıcı ve Ekip Yönetimi",
+        "page_title": "User & Team Management",
         "current_user": current_user,
         "users": users,
         "departments": departments,

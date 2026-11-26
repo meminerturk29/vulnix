@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page_title }} - {{ T.brand_name }}</title>
+  <title>{{ page_title|loc_title }} - {{ T.brand_name }}</title>
   <link rel="icon" type="image/svg+xml" href="/static/img/vulnix_logo.svg">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,12 +48,12 @@
         {{ current_user.full_name[:2].upper() }}
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-xs font-bold text-white truncate">{{ current_user.full_name }}</div>
+        <div class="text-xs font-bold text-white truncate">{{ current_user.full_name|loc_user }}</div>
         <div class="flex items-center gap-1.5 mt-0.5">
           <span class="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase {{ 'bg-purple-950/80 text-purple-300 border border-purple-800/50' if current_user.role == 'admin' else 'bg-cyan-950/80 text-cyan-300 border border-cyan-800/50' }}">
             {{ T.role_admin if current_user.role == 'admin' else T.role_analyst }}
           </span>
-          <span class="text-[10px] text-slate-400 truncate">{{ current_user.department or 'Cyber Security' }}</span>
+          <span class="text-[10px] text-slate-400 truncate">{{ current_user.department|loc_dept }}</span>
         </div>
       </div>
     </div>
@@ -124,7 +124,7 @@
     <!-- Topbar -->
     <header class="h-16 bg-[#080c15]/90 border-b border-slate-800/80 flex items-center justify-between px-8 backdrop-blur sticky top-0 z-20">
       <div>
-        <h2 class="text-sm font-bold text-white tracking-wide uppercase">{{ page_title }}</h2>
+        <h2 class="text-sm font-bold text-white tracking-wide uppercase">{{ page_title|loc_title }}</h2>
       </div>
 
       <div class="flex items-center gap-3">
@@ -160,7 +160,7 @@
               {{ current_user.full_name[:2].upper() }}
             </div>
             <div class="text-left hidden md:block">
-              <span class="text-xs font-bold text-white block leading-none truncate max-w-[120px]">{{ current_user.full_name }}</span>
+              <span class="text-xs font-bold text-white block leading-none truncate max-w-[120px]">{{ current_user.full_name|loc_user }}</span>
               <span class="text-[9px] font-mono {{ 'text-purple-400' if current_user.role == 'admin' else 'text-cyan-400' }} leading-none">
                 {{ T.role_admin if current_user.role == 'admin' else T.role_analyst }}
               </span>

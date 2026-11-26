@@ -73,7 +73,7 @@ async def list_vulnerabilities(
     conn.close()
 
     return templates.TemplateResponse(request=request, name="vulnerabilities_list.html", context={
-        "page_title": "Zaafiyet Yönetim Tablosu",
+        "page_title": "Vulnerability Management Matrix",
         "current_user": current_user,
         "vulns": vulns,
         "departments": departments,
@@ -105,7 +105,7 @@ async def new_vulnerability_form(request: Request):
     conn.close()
 
     return templates.TemplateResponse(request=request, name="vulnerability_form.html", context={
-        "page_title": "Yeni Zaafiyet Kaydı Ekle",
+        "page_title": "New Vulnerability Record",
         "current_user": current_user,
         "vuln": None,
         "departments": departments,
@@ -350,7 +350,7 @@ async def edit_vulnerability_form(request: Request, vuln_id: int):
     conn.close()
 
     return templates.TemplateResponse(request=request, name="vulnerability_form.html", context={
-        "page_title": f"Düzenle: {vuln['record_no']}",
+        "page_title": f"Edit: {vuln['record_no']}",
         "current_user": current_user,
         "vuln": vuln,
         "departments": departments,

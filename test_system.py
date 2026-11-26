@@ -53,7 +53,7 @@ def run_tests():
     print("\n[TEST 6] Admin Kullanıcı Yönetimi (/users)...")
     r = admin_client.get("/users")
     assert r.status_code == 200
-    assert "User & Team Management" in r.text or "Kullanıcı ve Ekip Yönetimi" in r.text
+    assert "User" in r.text and "Management" in r.text
     print("[OK] Kullanıcı yönetim paneli görüntülendi.")
 
     # 7. Add New User

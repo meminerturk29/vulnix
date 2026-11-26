@@ -17,9 +17,9 @@ async def login_page(request: Request, error: str = None, msg: str = None, next:
         return RedirectResponse(url="/", status_code=303)
 
     return templates.TemplateResponse(request=request, name="login.html", context={
-        "page_title": "Sisteme Giriş Yap",
+        "page_title": "Sign In",
         "error": error,
-        "msg": "Oturumunuz başarıyla kapatıldı." if msg == "logged_out" else msg,
+        "msg": "You have been successfully signed out." if msg == "logged_out" else msg,
         "next": next
     })
 
@@ -34,8 +34,8 @@ async def login_submit(
     user = authenticate_user(username.strip(), password)
     if not user:
         return templates.TemplateResponse(request=request, name="login.html", context={
-            "page_title": "Sisteme Giriş Yap",
-            "error": "Kullanıcı adı veya parola hatalı! Lütfen tekrar deneyiniz.",
+            "page_title": "Sign In",
+            "error": "Invalid username or password! Please try again.",
             "next": next,
             "entered_username": username
         }, status_code=400)

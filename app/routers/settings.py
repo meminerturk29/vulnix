@@ -45,7 +45,7 @@ async def settings_view(request: Request, msg: str = None, error: str = None):
     }
 
     return templates.TemplateResponse(request=request, name="settings.html", context={
-        "page_title": "Sistem ve SMTP E-Posta Ayarları",
+        "page_title": "System & SMTP Settings",
         "current_user": current_user,
         "settings": settings,
         "email_logs": email_logs,

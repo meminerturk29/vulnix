@@ -136,7 +136,7 @@ async def dashboard_view(request: Request):
     conn.close()
 
     return templates.TemplateResponse(request=request, name="dashboard.html", context={
-        "page_title": "VMS Yönetici & Operasyon Dashboard",
+        "page_title": "Security Operations Dashboard",
         "current_user": current_user,
         "total_vulns": total_vulns,
         "open_vulns": open_vulns,
