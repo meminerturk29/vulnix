@@ -7,6 +7,7 @@ from app.database import (
 )
 from app.auth import get_current_user
 from app.email_service import notify_assignee_about_vulnerability, notify_sla_reminder
+from app.security import validate_uploaded_file
 import os
 import shutil
 from datetime import datetime
@@ -158,11 +159,13 @@ async def create_vulnerability(
 
     image_path = ""
     if image_file and image_file.filename:
-        filename = f"{record_no}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{image_file.filename}"
-        file_location = os.path.join(UPLOAD_DIR, filename)
-        with open(file_location, "wb+") as file_object:
-            shutil.copyfileobj(image_file.file, file_object)
-        image_path = f"/static/uploads/{filename}"
+        safe_fname = validate_uploaded_file(image_file)
+        if safe_fname:
+            filename = f"{record_no}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{safe_fname}"
+            file_location = os.path.join(UPLOAD_DIR, filename)
+            with open(file_location, "wb+") as file_object:
+                shutil.copyfileobj(image_file.file, file_object)
+            image_path = f"/static/uploads/{filename}"
 
     closed_date = datetime.now().strftime("%Y-%m-%d") if status == "Kapatıldı" else None
 
@@ -398,11 +401,13 @@ async def update_vulnerability(
 
     image_path = existing["image_path"]
     if image_file and image_file.filename:
-        filename = f"VULN_{vuln_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{image_file.filename}"
-        file_location = os.path.join(UPLOAD_DIR, filename)
-        with open(file_location, "wb+") as file_object:
-            shutil.copyfileobj(image_file.file, file_object)
-        image_path = f"/static/uploads/{filename}"
+        safe_fname = validate_uploaded_file(image_file)
+        if safe_fname:
+            filename = f"VULN_{vuln_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{safe_fname}"
+            file_location = os.path.join(UPLOAD_DIR, filename)
+            with open(file_location, "wb+") as file_object:
+                shutil.copyfileobj(image_file.file, file_object)
+            image_path = f"/static/uploads/{filename}"
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     severity = calculate_severity_from_cvss(cvss_score)
@@ -466,11 +471,13 @@ async def add_vulnerability_response(
 
     attachment_path = ""
     if response_file and response_file.filename:
-        filename = f"RESP_{vuln_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{response_file.filename}"
-        file_location = os.path.join(UPLOAD_DIR, filename)
-        with open(file_location, "wb+") as file_object:
-            shutil.copyfileobj(response_file.file, file_object)
-        attachment_path = f"/static/uploads/{filename}"
+        safe_fname = validate_uploaded_file(response_file)
+        if safe_fname:
+            filename = f"RESP_{vuln_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{safe_fname}"
+            file_location = os.path.join(UPLOAD_DIR, filename)
+            with open(file_location, "wb+") as file_object:
+                shutil.copyfileobj(response_file.file, file_object)
+            attachment_path = f"/static/uploads/{filename}"
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

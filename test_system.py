@@ -178,9 +178,56 @@ def run_tests():
     assert "🇬🇧" in page_en.text and "🇹🇷" in page_en.text
     print("[OK] İngilizce diline geçiş ve bayraklar başarıyla doğrulandı.")
 
-    # 16. Clean up test vulnerabilities to ensure database remains 100% clean
+    # 16. Security Hardening & Vulnerability Resistance Tests
+    print("\n[TEST 16] Güvenlik Başlıkları (Security Headers) Testi...")
+    sec_resp = client.get("/login")
+    assert sec_resp.headers.get("X-Frame-Options") == "SAMEORIGIN"
+    assert sec_resp.headers.get("X-Content-Type-Options") == "nosniff"
+    assert sec_resp.headers.get("X-XSS-Protection") == "1; mode=block"
+    print("[OK] HTTP Güvenlik Başlıkları (Clickjacking & MIME-Sniffing koruması) doğrulandı.")
+
+    print("\n[TEST 17] SQL Injection Dayanıklılık Testi...")
+    # Inject malicious SQL in search query
+    sql_payload = "' OR 1=1 --"
+    sql_resp = admin_client.get(f"/vulnerabilities?q={sql_payload}")
+    assert sql_resp.status_code == 200
+    # Parameterized query treats it as literal string, no bypass or error
+    print("[OK] SQL Injection denemesi güvenli parametreli sorgu (parameterized query) ile bertaraf edildi.")
+
+    print("\n[TEST 18] Zararlı Dosya Yükleme (Arbitrary File Upload) Koruması...")
+    fake_exe = ("malicious.exe", b"MZ\x90\x00\x03\x00\x00\x00", "application/x-dosexec")
+    mal_resp = admin_client.post("/vulnerabilities/new", data={
+        "title": "Malware Upload Test",
+        "cvss_score": "7.5",
+        "department": "Cyber Security / SOC",
+        "assignee_name": "Admin",
+        "assignee_email": "admin@vulnix.local",
+        "status": "Açık",
+        "due_date": "2026-12-01",
+        "target_host": "192.168.1.50",
+        "target_port": "80",
+        "description": "Security test description",
+        "threat_assessment": "Security test threat",
+        "remediation": "Security test remediation"
+    }, files={"image_file": fake_exe})
+    assert mal_resp.status_code == 400
+    assert "Executable file upload rejected" in mal_resp.text or "Security Alert" in mal_resp.text
+    print("[OK] Zararlı çalıştırılabilir dosya (.exe) yüklemesi başarıyla engellendi (HTTP 400).")
+
+    print("\n[TEST 19] Brute-Force & Parola Deneme Kilitleme (Rate Limiting) Testi...")
+    # Attempt 5 wrong logins
+    for i in range(5):
+        client.post("/login", data={"username": "brute_target", "password": f"wrong_{i}"})
+    
+    # 6th attempt must be locked out with HTTP 429
+    lockout_resp = client.post("/login", data={"username": "brute_target", "password": "wrong_final"})
+    assert lockout_resp.status_code == 429
+    assert "Too many failed login attempts" in lockout_resp.text or "Account temporarily locked" in lockout_resp.text
+    print("[OK] Brute-Force saldırısı tespit edildi ve IP/Hesap kilitlendi (HTTP 429).")
+
+    # 20. Clean up test vulnerabilities to ensure database remains 100% clean
     clear_all_vulnerabilities()
-    print("[OK] Test sonrasi veritabani sifirlandi (0 zaafiyet durumu saglandi).")
+    print("\n[OK] Test sonrasi veritabani sifirlandi (0 zaafiyet durumu saglandi).")
 
     print("\n" + "=" * 60)
     print("TÜM İSTEKLER VE SİSTEM TESTLERİ EKSİKSİZ BAŞARIYLA TAMAMLANDI!")

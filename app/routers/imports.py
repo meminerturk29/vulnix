@@ -216,7 +216,16 @@ async def handle_file_upload(
         return RedirectResponse(url="/login", status_code=303)
 
     try:
+        if scan_file and scan_file.filename:
+            safe_name = os.path.basename(scan_file.filename)
+            _, ext = os.path.splitext(safe_name.lower())
+            if ext not in {".xml", ".json"}:
+                return RedirectResponse(url="/import?error=Invalid+file+type.+Only+.xml+and+.json+are+allowed.", status_code=303)
+
         content_bytes = await scan_file.read()
+        if len(content_bytes) > 30 * 1024 * 1024:
+            return RedirectResponse(url="/import?error=File+too+large.+Maximum+size+is+30MB.", status_code=303)
+
         content_str = content_bytes.decode("utf-8", errors="replace")
 
         if tool_type == "openvas":
