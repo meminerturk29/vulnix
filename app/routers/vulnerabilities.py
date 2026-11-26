@@ -194,8 +194,8 @@ async def create_vulnerability(
         vuln_id,
         current_user["id"],
         current_user["full_name"],
-        "Kayıt Açıldı",
-        f"Kayıt {current_user['full_name']} tarafından oluşturuldu ve {assignee_name} ({department}) üzerine atandı. Termin: {due_date}",
+        "Record Created",
+        f"Record created by {current_user['full_name']} and assigned to {assignee_name} ({department}). SLA Deadline: {due_date}",
         now_str
     ))
 
@@ -314,8 +314,8 @@ async def claim_vulnerability(request: Request, vuln_id: int):
         vuln_id,
         current_user["id"],
         current_user["full_name"],
-        "Zaafiyet Üstlenildi",
-        f"Çalışan ({current_user['full_name']} - {current_user.get('department', '')}) bu zaafiyeti üzerine aldı: 'Bu açığı ben hallediyorum, inceleme ve çözüm süreci başlatıldı.'",
+        "Claimed",
+        f"Specialist ({current_user['full_name']} - {current_user.get('department', '')}) claimed this vulnerability: 'I am taking ownership of this issue, investigation and remediation in progress.'",
         now_str
     ))
 
@@ -437,8 +437,8 @@ async def update_vulnerability(
             vuln_id,
             current_user["id"],
             current_user["full_name"],
-            "Durum Güncellendi",
-            f"Zaafiyet durumu '{existing['status']}' -> '{status}' olarak güncellendi.",
+            "Status Updated",
+            f"Vulnerability status updated: '{existing['status']}' -> '{status}'.",
             now_str
         ))
 
@@ -517,10 +517,10 @@ async def trigger_email_notification(
 
     if email_type == "sla_reminder":
         success, msg = notify_sla_reminder(vuln, base_url, sender_user_id=current_user["id"])
-        action_msg = "Termin hatırlatma e-postası gönderildi."
+        action_msg = "SLA reminder email dispatched."
     else:
         success, msg = notify_assignee_about_vulnerability(vuln, base_url, sender_user_id=current_user["id"])
-        action_msg = "Zaafiyet atama e-postası gönderildi."
+        action_msg = "Assignment notification email dispatched."
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("""
@@ -530,8 +530,8 @@ async def trigger_email_notification(
         vuln_id,
         current_user["id"],
         current_user["full_name"],
-        "E-Posta Bildirimi",
-        f"{action_msg} Alıcı: {vuln['assignee_name']} ({vuln['assignee_email']}). Sonuç: {msg}",
+        "Email Notification",
+        f"{action_msg} Recipient: {vuln['assignee_name']} ({vuln['assignee_email']}). Status: {msg}",
         now_str
     ))
 

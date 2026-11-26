@@ -51,13 +51,13 @@ def send_email(
             to_name,
             subject,
             html_content,
-            "Outbox (SMTP Yapılandırılmadı)",
-            "Ayarlar menüsünden gerçek SMTP sunucu adresi ve kimlik bilgileri girildiğinde e-postalar doğrudan alıcıya iletilecektir.",
+            "Outbox (SMTP Not Configured)",
+            "Emails will be directly sent to recipients once real SMTP server credentials are provided in System Settings.",
             now_str
         ))
         conn.commit()
         conn.close()
-        return True, "E-posta Outbox'a kaydedildi (SMTP sunucusu henüz ayarlanmadı)."
+        return True, "Email saved to Outbox (SMTP server not configured yet)."
 
     # Live Real SMTP Sending
     try:
@@ -102,7 +102,7 @@ def send_email(
         ))
         conn.commit()
         conn.close()
-        return True, f"E-posta {to_email} adresine SMTP sunucusu üzerinden başarıyla gönderildi."
+        return True, f"Email successfully sent to {to_email} via SMTP server."
 
     except Exception as e:
         err_msg = str(e)
@@ -124,7 +124,7 @@ def send_email(
         ))
         conn.commit()
         conn.close()
-        return False, f"SMTP İletim Hatası: {err_msg}"
+        return False, f"SMTP Delivery Error: {err_msg}"
 
 
 def render_vulnerability_email_template(vuln: Dict[str, Any], action_title: str, base_url: str) -> str:

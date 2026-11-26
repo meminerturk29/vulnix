@@ -547,6 +547,12 @@ STATUS_MAP = {
         "Diğer": "Other",
         "Üstlendi": "Claimed",
         "Üstlenildi": "Claimed",
+        "Zaafiyet Üstlenildi": "Claimed",
+        "E-Posta Bildirimi": "Email Notification",
+        "Email Notification": "Email Notification",
+        "Durum Güncellendi": "Status Updated",
+        "Status Updated": "Status Updated",
+        "Vulnerability Claimed": "Claimed",
         "Open": "Open",
         "Investigating": "Investigating",
         "Action Taken": "Action Taken",
@@ -570,6 +576,12 @@ STATUS_MAP = {
         "False Positive": "Yanlış Pozitif",
         "Other": "Diğer",
         "Claimed": "Üstlenildi",
+        "Email Notification": "E-Posta Bildirimi",
+        "E-Posta Bildirimi": "E-Posta Bildirimi",
+        "Status Updated": "Durum Güncellendi",
+        "Durum Güncellendi": "Durum Güncellendi",
+        "Vulnerability Claimed": "Zaafiyet Üstlenildi",
+        "Zaafiyet Üstlenildi": "Zaafiyet Üstlenildi",
         "Open": "Açık",
         "Investigating": "İnceleniyor",
         "Action Taken": "Aksiyon Alındı",
@@ -802,18 +814,84 @@ def localize_message(msg: str, lang: str = "en") -> str:
     if not msg:
         return ""
     if lang == "en":
+        # 1. OpenVAS scan imports
         msg = re.sub(
             r'Zaafiyet (.*?) taramasından içe aktarıldı\.\s*Atanan birim:\s*(.*?)\.\s*Termin:\s*([^.]+)\.?',
             r'Vulnerability imported from \1 scan. Assigned department: \2. SLA Deadline: \3.',
             msg
         )
+        # 2. Email Notifications
+        msg = msg.replace("Zaafiyet atama e-postası gönderildi.", "Assignment notification email dispatched.")
+        msg = msg.replace("Termin hatırlatma e-postası gönderildi.", "SLA reminder email dispatched.")
+        msg = msg.replace("Alıcı:", "Recipient:")
+        msg = msg.replace("Sonuç:", "Status:")
+        msg = msg.replace("E-posta Outbox'a kaydedildi (SMTP sunucusu henüz ayarlanmadı).", "Email saved to Outbox (SMTP server not configured yet).")
+        msg = msg.replace("E-posta Outbox'a kaydedildi (SMTP sunucusu henüz ayarlanmadı)", "Email saved to Outbox (SMTP server not configured yet)")
+        msg = msg.replace("SMTP İletim Hatası:", "SMTP Delivery Error:")
+        msg = re.sub(
+            r'E-posta (.*?) adresine SMTP sunucusu üzerinden başarıyla gönderildi\.',
+            r'Email successfully sent to \1 via SMTP server.',
+            msg
+        )
+        # 3. Claims
+        msg = re.sub(
+            r'Çalışan \((.*?) - (.*?)\) bu zaafiyeti üzerine aldı: \'Bu açığı ben hallediyorum, inceleme ve çözüm süreci başlatıldı\.\'',
+            r"Specialist (\1 - \2) claimed this vulnerability: 'I am taking ownership of this issue, investigation and remediation in progress.'",
+            msg
+        )
+        # 4. Status updates
+        msg = re.sub(
+            r'Zaafiyet durumu \'(.*?)\' -> \'(.*?)\' olarak güncellendi\.',
+            r"Vulnerability status updated: '\1' -> '\2'.",
+            msg
+        )
+        # 5. Manual creation
+        msg = re.sub(
+            r'Kayıt (.*?) tarafından oluşturuldu ve (.*?) \((.*?)\) üzerine atandı\. Termin: (.*?)$',
+            r'Record created by \1 and assigned to \2 (\3). SLA Deadline: \4',
+            msg
+        )
+        # 6. Sample response note
         msg = msg.replace("OpenSSL paketi güncellendi ve servis yeniden başlatıldı.", "OpenSSL package updated and service restarted.")
     elif lang == "tr":
+        # 1. OpenVAS scan imports
         msg = re.sub(
             r'Vulnerability imported from (.*?) scan\.\s*Assigned department:\s*(.*?)\.\s*SLA Deadline:\s*([^.]+)\.?',
             r'Zaafiyet \1 taramasından içe aktarıldı. Atanan birim: \2. Termin: \3.',
             msg
         )
+        # 2. Email Notifications
+        msg = msg.replace("Assignment notification email dispatched.", "Zaafiyet atama e-postası gönderildi.")
+        msg = msg.replace("SLA reminder email dispatched.", "Termin hatırlatma e-postası gönderildi.")
+        msg = msg.replace("Recipient:", "Alıcı:")
+        msg = msg.replace("Status:", "Sonuç:")
+        msg = msg.replace("Email saved to Outbox (SMTP server not configured yet).", "E-posta Outbox'a kaydedildi (SMTP sunucusu henüz ayarlanmadı).")
+        msg = msg.replace("Email saved to Outbox (SMTP server not configured yet)", "E-posta Outbox'a kaydedildi (SMTP sunucusu henüz ayarlanmadı).")
+        msg = msg.replace("SMTP Delivery Error:", "SMTP İletim Hatası:")
+        msg = re.sub(
+            r'Email successfully sent to (.*?) via SMTP server\.',
+            r'E-posta \1 adresine SMTP sunucusu üzerinden başarıyla gönderildi.',
+            msg
+        )
+        # 3. Claims
+        msg = re.sub(
+            r'Specialist \((.*?) - (.*?)\) claimed this vulnerability: \'I am taking ownership of this issue, investigation and remediation in progress\.\'',
+            r"Çalışan (\1 - \2) bu zaafiyeti üzerine aldı: 'Bu açığı ben hallediyorum, inceleme ve çözüm süreci başlatıldı.'",
+            msg
+        )
+        # 4. Status updates
+        msg = re.sub(
+            r'Vulnerability status updated: \'(.*?)\' -> \'(.*?)\'\.',
+            r"Zaafiyet durumu '\1' -> '\2' olarak güncellendi.",
+            msg
+        )
+        # 5. Manual creation
+        msg = re.sub(
+            r'Record created by (.*?) and assigned to (.*?) \((.*?)\)\. SLA Deadline: (.*?)$',
+            r'Kayıt \1 tarafından oluşturuldu ve \2 (\3) üzerine atandı. Termin: \4',
+            msg
+        )
+        # 6. Sample response note
         msg = msg.replace("OpenSSL package updated and service restarted.", "OpenSSL paketi güncellendi ve servis yeniden başlatıldı.")
     return msg
 
