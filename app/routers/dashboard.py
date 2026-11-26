@@ -22,16 +22,16 @@ async def dashboard_view(request: Request):
     cursor.execute("SELECT COUNT(*) FROM vulnerabilities")
     total_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'Açık'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('Açık', 'Open')")
     open_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'İnceleniyor'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('İnceleniyor', 'Investigating')")
     investigating_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'Aksiyon Alındı'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('Aksiyon Alındı', 'Action Taken')")
     in_action_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'Kapatıldı'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('Kapatıldı', 'Closed')")
     closed_vulns = cursor.fetchone()[0]
 
     # Severity distribution
@@ -43,20 +43,26 @@ async def dashboard_view(request: Request):
     sev_rows = cursor.fetchall()
     sev_counts = {"Kritik": 0, "Yüksek": 0, "Orta": 0, "Düşük": 0, "Bilgi": 0}
     for row in sev_rows:
-        sev_counts[row["severity"]] = row["cnt"]
+        sev = row["severity"]
+        if sev == "Critical": sev = "Kritik"
+        elif sev == "High": sev = "Yüksek"
+        elif sev == "Medium": sev = "Orta"
+        elif sev == "Low": sev = "Düşük"
+        elif sev == "Info": sev = "Bilgi"
+        sev_counts[sev] = sev_counts.get(sev, 0) + row["cnt"]
 
     # Overdue termin count
     today_str = datetime.now().strftime("%Y-%m-%d")
     cursor.execute("""
         SELECT COUNT(*) FROM vulnerabilities 
-        WHERE due_date < ? AND status != 'Kapatıldı' AND status != 'Yanlış Pozitif'
+        WHERE due_date < ? AND status NOT IN ('Kapatıldı', 'Closed', 'Yanlış Pozitif', 'False Positive')
     """, (today_str,))
     overdue_count = cursor.fetchone()[0]
 
     # Department distribution
     cursor.execute("""
         SELECT department, COUNT(*) as count,
-               SUM(CASE WHEN severity = 'Kritik' THEN 1 ELSE 0 END) as critical_count
+               SUM(CASE WHEN severity IN ('Kritik', 'Critical') THEN 1 ELSE 0 END) as critical_count
         FROM vulnerabilities
         WHERE department != ''
         GROUP BY department
@@ -75,7 +81,7 @@ async def dashboard_view(request: Request):
     # Key findings (Top critical and high open vulnerabilities)
     cursor.execute("""
         SELECT * FROM vulnerabilities 
-        WHERE status != 'Kapatıldı'
+        WHERE status NOT IN ('Kapatıldı', 'Closed')
         ORDER BY cvss_score DESC, id DESC 
         LIMIT 5
     """)
@@ -84,7 +90,7 @@ async def dashboard_view(request: Request):
     # Target host distribution
     cursor.execute("""
         SELECT target_host, COUNT(*) as vuln_count,
-               SUM(CASE WHEN severity = 'Kritik' THEN 1 ELSE 0 END) as critical_cnt,
+               SUM(CASE WHEN severity IN ('Kritik', 'Critical') THEN 1 ELSE 0 END) as critical_cnt,
                target_os
         FROM vulnerabilities
         GROUP BY target_host

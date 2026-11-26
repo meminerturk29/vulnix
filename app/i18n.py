@@ -558,6 +558,51 @@ STATUS_MAP = {
     }
 }
 
+DEPARTMENT_MAP = {
+    "en": {
+        "Sistem Yönetimi": "System Administration",
+        "Yazılım Geliştirme": "Software Development",
+        "Network/Ağ Güvenliği": "Network / Infrastructure",
+        "Network / Ağ Güvenliği": "Network / Infrastructure",
+        "Veritabanı Yönetimi": "Database Administration",
+        "DevOps": "DevOps & Cloud",
+        "DevOps & Bulut": "DevOps & Cloud",
+        "Bilgi Güvenliği / SOC": "Cyber Security / SOC",
+        "Genel": "General",
+        "Atanmamış": "Unassigned",
+        "Atanmadı": "Unassigned",
+        "System Administration": "System Administration",
+        "Software Development": "Software Development",
+        "Network / Infrastructure": "Network / Infrastructure",
+        "Database Administration": "Database Administration",
+        "DevOps & Cloud": "DevOps & Cloud",
+        "Cyber Security / SOC": "Cyber Security / SOC",
+        "General": "General",
+        "Unassigned": "Unassigned",
+    },
+    "tr": {
+        "System Administration": "Sistem Yönetimi",
+        "Software Development": "Yazılım Geliştirme",
+        "Network / Infrastructure": "Network / Ağ Güvenliği",
+        "Database Administration": "Veritabanı Yönetimi",
+        "DevOps & Cloud": "DevOps & Bulut",
+        "DevOps": "DevOps",
+        "Cyber Security / SOC": "Bilgi Güvenliği / SOC",
+        "General": "Genel",
+        "Unassigned": "Atanmamış",
+        "Sistem Yönetimi": "Sistem Yönetimi",
+        "Yazılım Geliştirme": "Yazılım Geliştirme",
+        "Network/Ağ Güvenliği": "Network / Ağ Güvenliği",
+        "Network / Ağ Güvenliği": "Network / Ağ Güvenliği",
+        "Veritabanı Yönetimi": "Veritabanı Yönetimi",
+        "DevOps & Bulut": "DevOps & Bulut",
+        "Bilgi Güvenliği / SOC": "Bilgi Güvenliği / SOC",
+        "Genel": "Genel",
+        "Atanmamış": "Atanmamış",
+        "Atanmadı": "Atanmamış",
+    }
+}
+
 
 def get_current_lang(request) -> str:
     """Reads language from cookie 'vulnix_lang', defaults to 'en'."""
@@ -577,6 +622,10 @@ def localize_status(val: str, lang: str = "en") -> str:
     return STATUS_MAP.get(lang, {}).get(val, val)
 
 
+def localize_department(val: str, lang: str = "en") -> str:
+    return DEPARTMENT_MAP.get(lang, {}).get(val, val)
+
+
 def i18n_context_processor(request) -> Dict[str, Any]:
     """Injected automatically into all Jinja2 templates."""
     lang = get_current_lang(request)
@@ -586,4 +635,5 @@ def i18n_context_processor(request) -> Dict[str, Any]:
         "T": t_dict,
         "loc_sev": lambda s: localize_severity(s, lang),
         "loc_status": lambda s: localize_status(s, lang),
+        "loc_dept": lambda s: localize_department(s, lang),
     }

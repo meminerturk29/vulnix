@@ -25,21 +25,27 @@ async def executive_report(request: Request):
     cursor.execute("SELECT COUNT(*) FROM vulnerabilities")
     total_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'Açık'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('Açık', 'Open')")
     open_vulns = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status = 'Kapatıldı'")
+    cursor.execute("SELECT COUNT(*) FROM vulnerabilities WHERE status IN ('Kapatıldı', 'Closed')")
     closed_vulns = cursor.fetchone()[0]
 
     cursor.execute("SELECT severity, COUNT(*) as cnt FROM vulnerabilities GROUP BY severity")
     sev_counts = {"Kritik": 0, "Yüksek": 0, "Orta": 0, "Düşük": 0, "Bilgi": 0}
     for row in cursor.fetchall():
-        sev_counts[row["severity"]] = row["cnt"]
+        sev = row["severity"]
+        if sev == "Critical": sev = "Kritik"
+        elif sev == "High": sev = "Yüksek"
+        elif sev == "Medium": sev = "Orta"
+        elif sev == "Low": sev = "Düşük"
+        elif sev == "Info": sev = "Bilgi"
+        sev_counts[sev] = sev_counts.get(sev, 0) + row["cnt"]
 
     cursor.execute("""
         SELECT target_host, target_os, COUNT(*) as vuln_count,
-               SUM(CASE WHEN severity = 'Kritik' THEN 1 ELSE 0 END) as critical_count,
-               SUM(CASE WHEN severity = 'Yüksek' THEN 1 ELSE 0 END) as high_count,
+               SUM(CASE WHEN severity IN ('Kritik', 'Critical') THEN 1 ELSE 0 END) as critical_count,
+               SUM(CASE WHEN severity IN ('Yüksek', 'High') THEN 1 ELSE 0 END) as high_count,
                department
         FROM vulnerabilities
         GROUP BY target_host
@@ -56,7 +62,7 @@ async def executive_report(request: Request):
 
     cursor.execute("""
         SELECT department, COUNT(*) as count,
-               SUM(CASE WHEN severity IN ('Kritik', 'Yüksek') THEN 1 ELSE 0 END) as severe_count
+               SUM(CASE WHEN severity IN ('Kritik', 'Critical', 'Yüksek', 'High') THEN 1 ELSE 0 END) as severe_count
         FROM vulnerabilities
         WHERE department != ''
         GROUP BY department
@@ -70,7 +76,7 @@ async def executive_report(request: Request):
     """)
     all_vulns = [dict(row) for row in cursor.fetchall()]
 
-    key_findings = [v for v in all_vulns if v["severity"] in ["Kritik", "Yüksek"]]
+    key_findings = [v for v in all_vulns if v["severity"] in ["Kritik", "Critical", "Yüksek", "High"]]
     if not key_findings:
         key_findings = all_vulns[:5]
 

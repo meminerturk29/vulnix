@@ -8,36 +8,58 @@ def infer_department_and_assignee(title: str, port: str, host: str) -> tuple:
     port_clean = port.split("/")[0].strip()
 
     if any(db in title_lower for db in ["sql", "postgres", "mysql", "oracle", "mongodb", "redis"]) or port_clean in ["1433", "3306", "5432", "1521", "27017", "6379"]:
-        return "Veritabanı Yönetimi", "Canan Kaya", "canan.kaya@sirket.com"
+        return "Database Administration", "Unassigned", ""
     elif any(net in title_lower for net in ["cisco", "vpn", "firewall", "router", "switch", "bgp", "dns", "snmp"]) or port_clean in ["53", "161", "162", "500", "4500"]:
-        return "Network/Ağ Güvenliği", "Deniz Arslan", "deniz.arslan@sirket.com"
+        return "Network / Infrastructure", "Unassigned", ""
     elif any(web in title_lower for web in ["xss", "csrf", "sqli", "injection", "cors", "header", "cookie", "jwt", "spring", "struts", "laravel", "django"]):
-        return "Yazılım Geliştirme", "Ahmet Yılmaz", "ahmet.yilmaz@sirket.com"
+        return "Software Development", "Unassigned", ""
     elif any(dev in title_lower for dev in ["docker", "kubernetes", "k8s", "jenkins", "gitlab", "ci/cd", "nginx"]):
-        return "DevOps", "Eren Yıldız", "eren.yildiz@sirket.com"
+        return "DevOps & Cloud", "Unassigned", ""
     else:
-        return "Sistem Yönetimi", "Burak Demir", "burak.demir@sirket.com"
+        return "System Administration", "Unassigned", ""
 
-def generate_threat_assessment(title: str, severity: str, desc: str) -> str:
+def generate_threat_assessment(title: str, severity: str, desc: str, lang: str = "en") -> str:
     combined = (title + " " + desc).lower()
+    
+    if lang == "tr":
+        if "remote code execution" in combined or "rce" in combined or "kod yürütme" in combined:
+            return "Saldırgan hedef sistem üzerinde uzaktan yetkisiz kod çalıştırabilir. Sunucu kontrolünü ele geçirerek iç ağa sıçrayabilir (lateral movement), veritabanlarına sızabilir veya fidye yazılımı (ransomware) yayabilir."
+        elif "sql injection" in combined or "sqli" in combined:
+            return "Saldırgan veritabanındaki tüm hassas tabloları (müşteri verileri, kimlik bilgileri, finansal kayıtlar) yetkisiz okuyabilir, değiştirebilir veya silebilir."
+        elif "traversal" in combined or "file inclusion" in combined:
+            return "Saldırgan sistem yapılandırma dosyalarını ve parolaları doğrudan okuyarak sunucu sırlarını ele geçirebilir ve yetki yükseltme saldırılarına zemin hazırlar."
+        elif "denial of service" in combined or "dos" in combined:
+            return "Saldırgan sistemin kaynaklarını tüketerek veya servisi çökerterek iş sürekliliğini durdurabilir ve şirket operasyonlarında kesintiye neden olabilir."
+        elif "bypass" in combined or "authentication" in combined:
+            return "Yetkisiz kişiler güvenlik kontrollerini ve kimlik doğrulamayı atlayarak yetkili kullanıcı veya yönetici panellerine izinsiz giriş yapabilir."
+        elif "ssl" in combined or "tls" in combined or "cipher" in combined:
+            return "Şifrelenmiş ağ trafiği ortadaki adam (MitM) saldırıları yoluyla dinlenebilir ve oturum verileri sızdırılabilir."
+        elif severity in ["Kritik", "Critical"]:
+            return "Sistemin bütünlüğü, gizliliği ve erişilebilirliği kritik düzeyde risk altındadır. Acil siber saldırı ve veri kaybı tehdidi bulunmaktadır."
+        elif severity in ["Yüksek", "High"]:
+            return "Saldırganlar bu açıklığı kullanarak şirket ağına yetkisiz erişim sağlayabilir ve kritik iş süreçlerini manipüle edebilir."
+        else:
+            return "Zafiyet bilgi sızmasına ve sonraki daha büyük hedefli saldırıların keşif aşamasında saldırganın işini kolaylaştırmasına neden olabilir."
+
+    # Default to English
     if "remote code execution" in combined or "rce" in combined or "kod yürütme" in combined:
-        return "Saldırgan hedef sistem üzerinde uzaktan yetkisiz kod çalıştırabilir. Sunucu kontrolünü ele geçirerek iç ağa sıçrayabilir (lateral movement), veri tabanlarına sızabilir veya ransomware yayabilir."
+        return "An attacker could remotely execute arbitrary code on the target system without authentication. By gaining control over the host, attackers could move laterally across the internal network, compromise databases, or deploy ransomware."
     elif "sql injection" in combined or "sqli" in combined:
-        return "Saldırgan veritabanındaki tüm hassas tabloları (müşteri verileri, kimlik bilgileri, finansal kayıtlar) yetkisiz okuyabilir, değiştirebilir veya silebilir. Veri sızıntısı ve KVKK cezalarına yol açar."
+        return "An attacker could extract, modify, or delete sensitive database tables (credentials, customer PII, financial records). This could lead to massive data exfiltration and severe compliance violations."
     elif "traversal" in combined or "file inclusion" in combined:
-        return "Saldırgan sistem dosyalarını (/etc/passwd, web.config, veritabanı parolaları) doğrudan okuyarak sunucu sırlarını ele geçirebilir ve yetki yükseltme saldırılarına zemin hazırlar."
+        return "An attacker could directly read restricted configuration and system files (/etc/passwd, web.config, database credentials), exposing system secrets and enabling privilege escalation."
     elif "denial of service" in combined or "dos" in combined:
-        return "Saldırgan sistemin kaynaklarını tüketerek veya servisi çökerterek iş sürekliliğini durdurabilir ve şirket operasyonlarında kesintiye neden olabilir."
+        return "An attacker could exhaust host resources or crash critical services, resulting in service outage and severe disruption to business continuity."
     elif "bypass" in combined or "authentication" in combined:
-        return "Yetkisiz kişiler güvenlik kontrollerini ve kimlik doğrulamayı atlayarak yetkili kullanıcı veya yönetici panellerine izinsiz giriş yapabilir."
+        return "Unauthorized parties could bypass security controls and authentication mechanisms to gain unauthorized access to administrative portals and sensitive endpoints."
     elif "ssl" in combined or "tls" in combined or "cipher" in combined:
-        return "Şifrelenmiş ağ trafiği ortadaki adam (MitM) saldırıları veya kriptografik açıklar yoluyla dinlenebilir ve oturum verileri sızdırılabilir."
-    elif severity == "Kritik":
-        return "Sistemin bütünlüğü, gizliliği ve erişilebilirliği kritik düzeyde risk altındadır. Acil siber saldırı ve veri kaybı tehdidi bulunmaktadır."
-    elif severity == "Yüksek":
-        return "Saldırganlar bu açıklığı kullanarak şirket ağına yetkisiz erişim sağlayabilir ve hassas iş süreçlerini manipüle edebilir."
+        return "Encrypted network communication could be intercepted or decrypted via Man-in-the-Middle (MitM) attacks, leaking authentication tokens and session payloads."
+    elif severity in ["Kritik", "Critical"]:
+        return "System integrity, confidentiality, and availability are at critical risk. Immediate cyber attack and full compromise threat detected."
+    elif severity in ["Yüksek", "High"]:
+        return "Attackers could exploit this weakness to gain unauthorized access to corporate networks and manipulate sensitive business processes."
     else:
-        return "Zafiyet bilgi sızmasına ve sonraki daha büyük hedefli saldırıların keşif aşamasında saldırganın işini kolaylaştırmasına neden olabilir."
+        return "The vulnerability could leak technical information, aiding attackers during the reconnaissance phase of multi-staged attacks."
 
 def parse_nessus_xml(xml_content: str) -> List[Dict[str, Any]]:
     """
@@ -88,12 +110,11 @@ def parse_nessus_xml(xml_content: str) -> List[Dict[str, Any]]:
             if cvss_score > 0.0:
                 severity = calculate_severity_from_cvss(cvss_score)
             else:
-                sev_map = {"4": "Kritik", "3": "Yüksek", "2": "Orta", "1": "Düşük", "0": "Bilgi"}
-                severity = sev_map.get(sev_num, "Bilgi")
-                cvss_score = {"Kritik": 9.5, "Yüksek": 7.5, "Orta": 5.0, "Düşük": 2.5, "Bilgi": 0.0}.get(severity, 0.0)
+                sev_map = {"4": "Critical", "3": "High", "2": "Medium", "1": "Low", "0": "Info"}
+                severity = sev_map.get(sev_num, "Info")
+                cvss_score = {"Critical": 9.5, "High": 7.5, "Medium": 5.0, "Low": 2.5, "Info": 0.0}.get(severity, 0.0)
 
-            # Skip pure Informational if gewünscht, but let's keep Low/Medium/High/Critical
-            if severity == "Bilgi" and cvss_score == 0:
+            if severity in ["Info", "Bilgi"] and cvss_score == 0:
                 continue
 
             cvss_vector_el = item.find("cvss3_vector")
@@ -103,20 +124,20 @@ def parse_nessus_xml(xml_content: str) -> List[Dict[str, Any]]:
             cve_id = cve_el.text if cve_el is not None and cve_el.text else ""
 
             desc_el = item.find("description")
-            description = desc_el.text if desc_el is not None and desc_el.text else "Açıklama belirtilmedi."
+            description = desc_el.text if desc_el is not None and desc_el.text else "No description provided."
 
             sol_el = item.find("solution")
-            remediation = sol_el.text if sol_el is not None and sol_el.text else "Resmi üretici güvenlik yamalarını uygulayınız."
+            remediation = sol_el.text if sol_el is not None and sol_el.text else "Apply official vendor security updates and review configuration."
 
             synopsis_el = item.find("synopsis")
             if synopsis_el is not None and synopsis_el.text:
                 description = f"{synopsis_el.text}\n\n{description}"
 
             dept, assignee_name, assignee_email = infer_department_and_assignee(plugin_name, port_display, target_host_display)
-            threat = generate_threat_assessment(plugin_name, severity, description)
+            threat = generate_threat_assessment(plugin_name, severity, description, lang="en")
 
-            # SLA Termin calculation
-            days_sla = {"Kritik": 3, "Yüksek": 7, "Orta": 15, "Düşük": 30}.get(severity, 15)
+            # SLA Deadline calculation
+            days_sla = {"Critical": 3, "High": 7, "Medium": 15, "Low": 30, "Kritik": 3, "Yüksek": 7, "Orta": 15, "Düşük": 30}.get(severity, 15)
             due_date = (datetime.now() + timedelta(days=days_sla)).strftime("%Y-%m-%d")
 
             parsed_vulns.append({
@@ -127,17 +148,17 @@ def parse_nessus_xml(xml_content: str) -> List[Dict[str, Any]]:
                 "department": dept,
                 "assignee_name": assignee_name,
                 "assignee_email": assignee_email,
-                "status": "Açık",
+                "status": "Open",
                 "due_date": due_date,
                 "tool_source": "Nessus",
                 "target_host": target_host_display,
                 "target_port": port_display,
-                "target_os": host_os or "Linux/Windows",
+                "target_os": host_os or "General Server",
                 "description": description.strip(),
                 "threat_assessment": threat,
                 "remediation": remediation.strip(),
                 "cve_id": cve_id,
-                "notes": f"Nessus otomatik taramasından aktarıldı (Plugin ID: {item.get('pluginID', '')})"
+                "notes": f"Imported from Nessus XML (Plugin ID: {item.get('pluginID', '')})"
             })
 
     return parsed_vulns

@@ -3,42 +3,42 @@
   <report>
     <results>
       <result id="res-001">
-        <name>Spring4Shell: Spring Framework RCE (CVE-2022-22965)</name>
+        <name>Spring4Shell: Spring Framework Remote Code Execution (CVE-2022-22965)</name>
         <host>192.168.10.77</host>
         <port>8443/tcp</port>
         <threat>High</threat>
         <severity>9.8</severity>
-        <description>Spring Framework 5.3.0 - 5.3.17 sürümlerinde JDK 9+ üzerinde çalışan uygulamalarda veri bağlama (DataBinder) mekanizması aracılığıyla keyfi dosya yazma ve uzaktan kod yürütme mümkündür.</description>
+        <description>Spring Framework versions 5.3.0 through 5.3.17 running on JDK 9+ contain an unauthenticated remote code execution vulnerability via DataBinder parameter binding.</description>
         <nvt oid="1.3.6.1.4.1.25623.1.0.147981">
           <cve>CVE-2022-22965</cve>
           <cvss_base>9.8</cvss_base>
-          <solution>Spring Framework sürümünü 5.3.18 veya 5.2.20'ye yükseltiniz.</solution>
+          <solution>Upgrade Spring Framework to version 5.3.18, 5.2.20 or newer.</solution>
         </nvt>
       </result>
       <result id="res-002">
-        <name>SMBv1 Protokolü Aktif (WannaCry / EternalBlue Savunmasızlığı)</name>
+        <name>SMBv1 Protocol Active (EternalBlue / WannaCry Exposure)</name>
         <host>192.168.10.12</host>
         <port>445/tcp</port>
         <threat>High</threat>
         <severity>8.1</severity>
-        <description>Eski ve güvensiz SMBv1 protokolü hedef sistemde etkin durumdadır. Bu durum ağ genelinde fidye yazılımlarının hızlı yayılmasına sebep olabilir.</description>
+        <description>The legacy and deprecated SMBv1 protocol is enabled on the remote Windows server. This allows remote attackers to exploit EternalBlue and rapidly propagate ransomware throughout the enterprise.</description>
         <nvt oid="1.3.6.1.4.1.25623.1.0.108151">
           <cve>CVE-2017-0144</cve>
           <cvss_base>8.1</cvss_base>
-          <solution>SMBv1 protokolünü grup ilkesi (GPO) veya PowerShell ile tamamen devre dışı bırakınız.</solution>
+          <solution>Disable the SMBv1 protocol completely via Group Policy (GPO) or PowerShell.</solution>
         </nvt>
       </result>
       <result id="res-003">
-        <name>SNMP Varsayılan Topluluk Dizgisi 'public' Kullanımı</name>
+        <name>SNMP Default Community String 'public' Detected</name>
         <host>10.0.0.254</host>
         <port>161/udp</port>
         <threat>Medium</threat>
         <severity>5.0</severity>
-        <description>SNMP servisinde fabrika çıkışı varsayılan 'public' read string'i kullanılmaktadır. Ağ topolojisi ve cihaz bilgileri yetkisiz okunabilir.</description>
+        <description>The remote SNMP server responds to the factory default community string 'public'. An attacker can query this service to extract sensitive network configuration and host statistics.</description>
         <nvt oid="1.3.6.1.4.1.25623.1.0.10264">
           <cve>CVE-1999-0517</cve>
           <cvss_base>5.0</cvss_base>
-          <solution>Varsayılan stringleri değiştiriniz veya SNMPv3'e geçiş yaparak kimlik doğrulama ve şifreleme uygulayınız.</solution>
+          <solution>Change the default community string and migrate to SNMPv3 with authentication and encryption enabled.</solution>
         </nvt>
       </result>
     </results>

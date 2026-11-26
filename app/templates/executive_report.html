@@ -195,7 +195,7 @@
             <tr class="hover:bg-slate-900/50">
               <td class="p-3 font-mono font-semibold text-cyan-300 text-print-dark">{{ target.target_host }}</td>
               <td class="p-3 text-slate-400 text-print-muted">{{ target.target_os or '-' }}</td>
-              <td class="p-3 font-medium">{{ target.department }}</td>
+              <td class="p-3 font-medium">{{ target.department|loc_dept }}</td>
               <td class="p-3 text-center font-bold">{{ target.vuln_count }}</td>
               <td class="p-3 text-center">
                 {% if target.critical_count > 0 %}
@@ -264,7 +264,7 @@
           </div>
 
           <div class="flex items-center justify-between text-xs text-slate-400 text-print-muted pt-1">
-            <span>{{ T.col_dept }}: <strong>{{ vuln.department }}</strong> ({{ vuln.assignee_name }})</span>
+            <span>{{ T.col_dept }}: <strong>{{ vuln.department|loc_dept }}</strong> ({{ vuln.assignee_name }})</span>
             <span>{{ T.col_due }}: <strong class="text-amber-400">{{ vuln.due_date }}</strong></span>
           </div>
         </div>
@@ -287,7 +287,7 @@
         {% for d in departments %}
         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 card-print">
           <div class="flex justify-between items-center mb-2">
-            <h4 class="font-bold text-sm text-white text-print-dark">{{ d.department }}</h4>
+            <h4 class="font-bold text-sm text-white text-print-dark">{{ d.department|loc_dept }}</h4>
             <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-semibold">{{ d.count }} {{ 'Findings' if lang == 'en' else 'Zaafiyet' }}</span>
           </div>
           <p class="text-xs text-slate-400 text-print-muted mb-2">

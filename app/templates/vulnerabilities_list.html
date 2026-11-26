@@ -149,7 +149,7 @@
 
               <!-- 4. Birim -->
               <td class="px-4 py-3 whitespace-nowrap">
-                <span class="text-slate-300 font-medium">{{ v.department or '-' }}</span>
+                <span class="text-slate-300 font-medium">{{ v.department|loc_dept if v.department else '-' }}</span>
               </td>
 
               <!-- 5. İlgili Kişi -->
