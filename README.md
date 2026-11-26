@@ -14,6 +14,41 @@
   <img src="https://img.shields.io/badge/Platform-Kali%20Linux%20%7C%20Windows-brightgreen" alt="Platform">
   <img src="https://img.shields.io/badge/Scanner-OpenVAS%20%2F%20Greenbone%20OS%2025-orange" alt="OpenVAS">
   <img src="https://img.shields.io/badge/Architecture-Asyncio%20Scheduler-purple" alt="Async Scheduler">
+  <img src="https://img.shields.io/badge/i18n-English%20%7C%20Turkish-cyan" alt="Bilingual">
+</p>
+
+---
+
+## 📸 Interface Preview / Ekran Görüntüleri
+
+<p align="center">
+  <img src="docs/screenshots/dashboard.jpg" alt="VULNIX Security Operations Dashboard" width="100%">
+  <br>
+  <em><strong>Security Operations Dashboard:</strong> Real-time threat landscape, CVSS risk distribution donut chart, department workload analytics, and live remediation timeline.</em>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/screenshots/vulnerability_matrix.png" alt="VULNIX Vulnerability Matrix" width="100%">
+  <br>
+  <em><strong>Vulnerability Management Matrix:</strong> 8-column standard enterprise tracking with severity badges, SLA deadlines, and dynamic search/filtering.</em>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/screenshots/openvas_sync.jpg" alt="OpenVAS Integration & Background Scheduler" width="100%">
+  <br>
+  <em><strong>OpenVAS GSAD 27 Integration & Scheduler:</strong> Autonomous scheduled scans, encrypted credential persistence, and live connection telemetry.</em>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/screenshots/vulnerability_detail_form.jpg" alt="Vulnerability Detail & Assessment Form" width="100%">
+  <br>
+  <em><strong>Vulnerability Form & SLA Tracking:</strong> CVSS v3.1 scoring, CVE binding, department routing, and remediation deadline assignment.</em>
 </p>
 
 ---
@@ -137,6 +172,8 @@ Navigate to **`http://localhost:8000`** in your browser.
 
 ```
 vulnix/
+├── docs/
+│   └── screenshots/                # HD Interface screenshots & visual documentation
 ├── app/
 │   ├── main.py                     # FastAPI ana giriş noktası
 │   ├── database.py                 # SQLite şeması ve migration motoru
