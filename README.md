@@ -88,16 +88,11 @@ Navigate to **`http://localhost:8000`** in your browser.
 
 ---
 
-### 🔑 Default Credentials & Accounts
+### 🔑 Default Administrator Login
 
-| Username | Password | Role | Department | Permissions |
-| :--- | :--- | :--- | :--- | :--- |
-| **`admin`** | **`admin123`** | **Administrator** | InfoSec / SOC | Full management, user control, scanner API, SMTP settings |
-| **`ahmet.yilmaz`** | **`user123`** | **Analyst** | Software Dev | Claim vulnerabilities, submit patches & PoC evidence |
-| **`burak.demir`** | **`user123`** | **Analyst** | Systems Admin | Task assignment, status updates |
-| **`canan.kaya`** | **`user123`** | **Analyst** | Database Admin | Task assignment, status updates |
-| **`deniz.arslan`** | **`user123`** | **Analyst** | Network Security | Task assignment, status updates |
-| **`eren.yildiz`** | **`user123`** | **Analyst** | DevOps & Cloud | Task assignment, status updates |
+| Username | Password | Role | Description |
+| :--- | :--- | :--- | :--- |
+| **`admin`** | **`admin123`** | **Administrator** | Full system access. Team members and analysts are added dynamically via **User Management** (`/users`). |
 
 ---
 

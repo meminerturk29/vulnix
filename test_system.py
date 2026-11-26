@@ -70,9 +70,9 @@ def run_tests():
     assert r.status_code == 303
     print("[OK] Yeni çalışan (Selin Bulut) başarıyla eklendi.")
 
-    # 8. Login as Worker (ahmet.yilmaz)
-    print("\n[TEST 8] Çalışan olarak giriş (ahmet.yilmaz / user123)...")
-    r = client.post("/login", data={"username": "ahmet.yilmaz", "password": "user123", "next": "/"}, follow_redirects=False)
+    # 8. Login as Worker (selin.bulut)
+    print("\n[TEST 8] Çalışan olarak giriş (selin.bulut / user1234)...")
+    r = client.post("/login", data={"username": "selin.bulut", "password": "user1234", "next": "/"}, follow_redirects=False)
     assert r.status_code == 303
     worker_session = r.cookies[SESSION_COOKIE_NAME]
     worker_client = TestClient(app, cookies={SESSION_COOKIE_NAME: worker_session})
@@ -114,7 +114,7 @@ def run_tests():
     c = conn.cursor()
     c.execute("SELECT assignee_name, status FROM vulnerabilities WHERE id = 9999")
     row = c.fetchone()
-    assert row["assignee_name"] == "Ahmet Yılmaz", f"Atanan kişi Ahmet Yılmaz olmalıydı, gelen: {row['assignee_name']}"
+    assert row["assignee_name"] == "Selin Bulut", f"Atanan kişi Selin Bulut olmalıydı, gelen: {row['assignee_name']}"
     print(f"[OK] Veritabanı doğrulandı -> Atanan: {row['assignee_name']}, Durum: {row['status']}")
 
     # 11. Worker adds response note

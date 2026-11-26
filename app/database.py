@@ -213,23 +213,10 @@ def seed_users(conn: sqlite3.Connection):
     cursor = conn.cursor()
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Only default Administrator account is seeded. All team members are added via /users UI.
     cursor.execute("""
         INSERT OR IGNORE INTO users (username, password_hash, full_name, email, role, department, is_active, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'admin', ?, 1, ?, ?)
-    """, ("admin", _hash_pw("admin123"), "Sistem Yöneticisi (Admin)", "admin@sirket.com", "Bilgi Güvenliği", now_str, now_str))
-
-    employees = [
-        ("ahmet.yilmaz",  "Ahmet Yılmaz",  "ahmet.yilmaz@sirket.com",  "Yazılım Geliştirme"),
-        ("burak.demir",   "Burak Demir",   "burak.demir@sirket.com",   "Sistem Yönetimi"),
-        ("canan.kaya",    "Canan Kaya",    "canan.kaya@sirket.com",    "Veritabanı Yönetimi"),
-        ("deniz.arslan",  "Deniz Arslan",  "deniz.arslan@sirket.com",  "Network/Ağ Güvenliği"),
-        ("eren.yildiz",   "Eren Yıldız",   "eren.yildiz@sirket.com",   "DevOps"),
-        ("firat.gunes",   "Fırat Güneş",   "firat.gunes@sirket.com",   "Bilgi Güvenliği / SOC"),
-    ]
-    for username, name, email, dept in employees:
-        cursor.execute("""
-            INSERT OR IGNORE INTO users (username, password_hash, full_name, email, role, department, is_active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, 'user', ?, 1, ?, ?)
-        """, (username, _hash_pw("user123"), name, email, dept, now_str, now_str))
+    """, ("admin", _hash_pw("admin123"), "Sistem Yöneticisi (Admin)", "admin@sirket.com", "Bilgi Güvenliği / SOC", now_str, now_str))
 
     conn.commit()
