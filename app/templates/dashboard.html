@@ -183,7 +183,7 @@
               </div>
               <div class="space-y-0.5">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <span class="text-xs font-bold text-white">{{ a.author_name }}</span>
+                  <span class="text-xs font-bold text-white">{{ a.author_name|loc_author }}</span>
                   <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold
                     {{ 'bg-emerald-950 text-emerald-400 border border-emerald-800' if a.action_type in ['Kapatıldı', 'Yama Uygulandı', 'Closed', 'Patched'] else
                        'bg-cyan-950 text-cyan-400 border border-cyan-800' if 'Üstlendi' in a.action_type or 'Claimed' in a.action_type else
@@ -194,7 +194,7 @@
                     {{ a.record_no }}
                   </a>
                 </div>
-                <p class="text-xs text-slate-300">{{ a.message }}</p>
+                <p class="text-xs text-slate-300">{{ a.message|loc_msg }}</p>
               </div>
             </div>
             <div class="text-[10px] text-slate-500 whitespace-nowrap shrink-0">

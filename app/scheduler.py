@@ -34,7 +34,7 @@ class OpenVASScheduler:
         conn.commit()
         conn.close()
 
-    def perform_sync(self, trigger_source: str = "Zamanlayıcı") -> Tuple[bool, str, int, int]:
+    def perform_sync(self, trigger_source: str = "Periodic Scheduler") -> Tuple[bool, str, int, int]:
         """
         Executes a live sync against the OpenVAS host using stored credentials.
         Returns: (success, message, new_vuln_count, total_findings)
@@ -46,17 +46,17 @@ class OpenVASScheduler:
         include_logs = settings.get("openvas_include_logs", "0") == "1"
 
         if not url or not username or not password:
-            msg = "OpenVAS kimlik bilgileri eksik (URL, kullanıcı adı veya parola bulunamadı)."
-            self.update_sync_status(f"Hata: {msg}")
+            msg = "OpenVAS credentials missing (URL, username, or password not found)."
+            self.update_sync_status(f"Error: {msg}")
             return False, msg, 0, 0
 
-        logger.info(f"[OpenVAS Scheduler] Canlı tarama kontrol ediliyor: {url} ({username}) [Tetikleyici: {trigger_source}]")
+        logger.info(f"[OpenVAS Scheduler] Checking live scan: {url} ({username}) [Trigger: {trigger_source}]")
         client = OpenVASApiClient(base_url=url, username=username, password=password)
         ok, vulns, msg = client.fetch_live_vulnerabilities(username=username, password=password, include_logs=include_logs)
 
         if not ok:
-            logger.warning(f"[OpenVAS Scheduler] Bağlantı/sorgu hatası: {msg}")
-            self.update_sync_status(f"Hata: {msg}")
+            logger.warning(f"[OpenVAS Scheduler] Connection/query error: {msg}")
+            self.update_sync_status(f"Error: {msg}")
             return False, msg, 0, 0
 
         total_findings = len(vulns)
@@ -66,14 +66,14 @@ class OpenVASScheduler:
         if vulns:
             new_count, exist_count = insert_imported_vulns(
                 vulns, 
-                author_name=f"OpenVAS Otomasyonu ({trigger_source})"
+                author_name=f"OpenVAS Automation ({trigger_source})"
             )
             if new_count > 0:
-                summary = f"Başarılı: {total_findings} bulgu tarandı ({new_count} yeni zaafiyet sisteme eklendi)."
+                summary = f"Success: {total_findings} findings scanned ({new_count} new vulnerabilities added)."
             else:
-                summary = f"Başarılı: {total_findings} bulgunun tamamı ({exist_count} kayıt) zaten güncel."
+                summary = f"Success: All {total_findings} findings ({exist_count} records) are up to date."
         else:
-            summary = "Başarılı: OpenVAS sunucusunda yeni/aktif risk bulgusu bulunmuyor."
+            summary = "Success: No active vulnerability findings detected on OpenVAS host."
 
         self.update_sync_status(summary, total_findings)
         logger.info(f"[OpenVAS Scheduler] {summary}")
@@ -96,7 +96,7 @@ class OpenVASScheduler:
 
                 if is_enabled:
                     # Run sync in threadpool to avoid blocking async event loop
-                    await asyncio.to_thread(self.perform_sync, "Periyodik Zamanlayıcı")
+                    await asyncio.to_thread(self.perform_sync, "Periodic Scheduler")
 
                 # Wait for interval or until manually awakened
                 wait_seconds = max(interval_minutes * 60, 30)

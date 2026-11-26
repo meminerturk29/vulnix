@@ -131,7 +131,7 @@ def run_tests():
     # 12. Admin checks Worker Actions on Dashboard
     print("\n[TEST 12] Admin Dashboard'da çalışan aksiyonunu görme...")
     r = admin_client.get("/")
-    assert "OpenSSL paketi güncellendi" in r.text
+    assert "OpenSSL paketi güncellendi" in r.text or "OpenSSL package updated" in r.text
     assert "Selin Bulut" in r.text
     print("[OK] Admin paneli çalışanın aksiyonunu canlı akışta gösteriyor!")
 

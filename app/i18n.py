@@ -538,13 +538,38 @@ STATUS_MAP = {
         "Aksiyon Alındı": "Action Taken",
         "Kapatıldı": "Closed",
         "Kabul Edilen Risk": "Risk Accepted",
+        "Kayıt Açıldı": "Record Created",
+        "Yama Uygulandı": "Patch Applied",
+        "Konfigürasyon Değiştirildi": "Configuration Changed",
+        "İnceleme Başlatıldı": "Investigation Started",
+        "Test Edildi ve Doğrulandı": "Tested & Verified",
+        "Yanlış Pozitif (False Positive)": "False Positive",
+        "Diğer": "Other",
+        "Üstlendi": "Claimed",
+        "Üstlenildi": "Claimed",
         "Open": "Open",
         "Investigating": "Investigating",
         "Action Taken": "Action Taken",
         "Closed": "Closed",
-        "Risk Accepted": "Risk Accepted"
+        "Risk Accepted": "Risk Accepted",
+        "Record Created": "Record Created",
+        "Patch Applied": "Patch Applied",
+        "Configuration Changed": "Configuration Changed",
+        "Investigation Started": "Investigation Started",
+        "Tested & Verified": "Tested & Verified",
+        "False Positive": "False Positive",
+        "Other": "Other",
+        "Claimed": "Claimed",
     },
     "tr": {
+        "Record Created": "Kayıt Açıldı",
+        "Patch Applied": "Yama Uygulandı",
+        "Configuration Changed": "Konfigürasyon Değiştirildi",
+        "Investigation Started": "İnceleme Başlatıldı",
+        "Tested & Verified": "Test Edildi ve Doğrulandı",
+        "False Positive": "Yanlış Pozitif",
+        "Other": "Diğer",
+        "Claimed": "Üstlenildi",
         "Open": "Açık",
         "Investigating": "İnceleniyor",
         "Action Taken": "Aksiyon Alındı",
@@ -554,7 +579,16 @@ STATUS_MAP = {
         "İnceleniyor": "İnceleniyor",
         "Aksiyon Alındı": "Aksiyon Alındı",
         "Kapatıldı": "Kapatıldı",
-        "Kabul Edilen Risk": "Kabul Edilen Risk"
+        "Kabul Edilen Risk": "Kabul Edilen Risk",
+        "Kayıt Açıldı": "Kayıt Açıldı",
+        "Yama Uygulandı": "Yama Uygulandı",
+        "Konfigürasyon Değiştirildi": "Konfigürasyon Değiştirildi",
+        "İnceleme Başlatıldı": "İnceleme Başlatıldı",
+        "Test Edildi ve Doğrulandı": "Test Edildi ve Doğrulandı",
+        "Yanlış Pozitif (False Positive)": "Yanlış Pozitif (False Positive)",
+        "Diğer": "Diğer",
+        "Üstlendi": "Üstlendi",
+        "Üstlenildi": "Üstlenildi",
     }
 }
 
@@ -567,6 +601,7 @@ DEPARTMENT_MAP = {
         "Veritabanı Yönetimi": "Database Administration",
         "DevOps": "DevOps & Cloud",
         "DevOps & Bulut": "DevOps & Cloud",
+        "Bilgi Güvenliği": "Cyber Security / SOC",
         "Bilgi Güvenliği / SOC": "Cyber Security / SOC",
         "Genel": "General",
         "Atanmamış": "Unassigned",
@@ -577,6 +612,8 @@ DEPARTMENT_MAP = {
         "Database Administration": "Database Administration",
         "DevOps & Cloud": "DevOps & Cloud",
         "Cyber Security / SOC": "Cyber Security / SOC",
+        "Cyber Security": "Cyber Security / SOC",
+        "Information Security": "Cyber Security / SOC",
         "General": "General",
         "Unassigned": "Unassigned",
     },
@@ -588,6 +625,8 @@ DEPARTMENT_MAP = {
         "DevOps & Cloud": "DevOps & Bulut",
         "DevOps": "DevOps",
         "Cyber Security / SOC": "Bilgi Güvenliği / SOC",
+        "Cyber Security": "Bilgi Güvenliği / SOC",
+        "Information Security": "Bilgi Güvenliği / SOC",
         "General": "Genel",
         "Unassigned": "Atanmamış",
         "Sistem Yönetimi": "Sistem Yönetimi",
@@ -596,6 +635,7 @@ DEPARTMENT_MAP = {
         "Network / Ağ Güvenliği": "Network / Ağ Güvenliği",
         "Veritabanı Yönetimi": "Veritabanı Yönetimi",
         "DevOps & Bulut": "DevOps & Bulut",
+        "Bilgi Güvenliği": "Bilgi Güvenliği / SOC",
         "Bilgi Güvenliği / SOC": "Bilgi Güvenliği / SOC",
         "Genel": "Genel",
         "Atanmamış": "Atanmamış",
@@ -607,6 +647,8 @@ DEPARTMENT_MAP = {
 PAGE_TITLE_MAP = {
     "en": {
         "VMS Yönetici & Operasyon Dashboard": "Security Operations Dashboard",
+        "VMS YÖNETİCİ & OPERASYON DASHBOARD": "Security Operations Dashboard",
+        "VMS Yönetici & Operasyon Paneli": "Security Operations Dashboard",
         "Güvenlik Operasyonları Paneli": "Security Operations Dashboard",
         "Security Operations Dashboard": "Security Operations Dashboard",
         "Zaafiyet Yönetim Tablosu": "Vulnerability Management Matrix",
@@ -628,6 +670,8 @@ PAGE_TITLE_MAP = {
     "tr": {
         "Security Operations Dashboard": "Güvenlik Operasyonları Paneli",
         "VMS Yönetici & Operasyon Dashboard": "Güvenlik Operasyonları Paneli",
+        "VMS YÖNETİCİ & OPERASYON DASHBOARD": "Güvenlik Operasyonları Paneli",
+        "VMS Yönetici & Operasyon Paneli": "Güvenlik Operasyonları Paneli",
         "Güvenlik Operasyonları Paneli": "Güvenlik Operasyonları Paneli",
         "Vulnerability Management Matrix": "Zaafiyet Yönetim Tablosu",
         "Zaafiyet Yönetim Tablosu": "Zaafiyet Yönetim Tablosu",
@@ -681,21 +725,97 @@ def localize_status(val: str, lang: str = "en") -> str:
 
 
 def localize_department(val: str, lang: str = "en") -> str:
+    if not val:
+        return ""
+    if lang == "en":
+        val_upper = val.upper()
+        if "BİLGİ GÜVENLİĞİ" in val_upper or "BILGI GUVENLIGI" in val_upper or "BİLGİ GÜVENLIGI" in val_upper:
+            return "Cyber Security / SOC"
+        if "SİSTEM" in val_upper or "SISTEM" in val_upper:
+            return "System Administration"
+        if "YAZILIM" in val_upper:
+            return "Software Development"
+        if "VERİTABANI" in val_upper or "VERITABANI" in val_upper:
+            return "Database Administration"
+        if "AĞ" in val_upper or "AG" in val_upper:
+            return "Network / Infrastructure"
+    elif lang == "tr":
+        val_upper = val.upper()
+        if "CYBER" in val_upper or "SECURITY" in val_upper:
+            return "Bilgi Güvenliği / SOC"
+        if "SYSTEM ADMIN" in val_upper:
+            return "Sistem Yönetimi"
     return DEPARTMENT_MAP.get(lang, {}).get(val, val)
 
 
 def localize_page_title(val: str, lang: str = "en") -> str:
     if not val:
         return ""
-    if lang == "en" and val.startswith("Düzenle:"):
-        return val.replace("Düzenle:", "Edit:")
-    elif lang == "tr" and val.startswith("Edit:"):
-        return val.replace("Edit:", "Düzenle:")
+    if lang == "en":
+        if val.startswith("Düzenle:"):
+            return val.replace("Düzenle:", "Edit:")
+        val_upper = val.upper()
+        if "YÖNETİCİ" in val_upper or "OPERASYON" in val_upper or "YONETICI" in val_upper:
+            if "DASHBOARD" in val_upper or "PANEL" in val_upper or "VMS" in val_upper:
+                return "Security Operations Dashboard"
+    elif lang == "tr":
+        if val.startswith("Edit:"):
+            return val.replace("Edit:", "Düzenle:")
     return PAGE_TITLE_MAP.get(lang, {}).get(val, val)
 
 
 def localize_user_name(val: str, lang: str = "en") -> str:
+    if not val:
+        return ""
+    if lang == "en":
+        val = val.replace("Sistem Yöneticisi", "System Administrator")
+        val = val.replace("Yönetici", "Administrator")
+    elif lang == "tr":
+        val = val.replace("System Administrator", "Sistem Yöneticisi")
+        val = val.replace("Administrator", "Yönetici")
     return USER_NAME_MAP.get(lang, {}).get(val, val)
+
+
+import re
+
+def localize_author(author: str, lang: str = "en") -> str:
+    if not author:
+        return ""
+    if lang == "en":
+        author = author.replace("OpenVAS Otomasyonu", "OpenVAS Automation")
+        author = author.replace("Hızlı Senkron", "Instant Sync")
+        author = author.replace("Periyodik Zamanlayıcı", "Periodic Scheduler")
+        author = author.replace("Zamanlayıcı", "Scheduler")
+        author = author.replace("OpenVAS Raporu", "OpenVAS Report")
+        author = author.replace("Sistem Yöneticisi", "System Administrator")
+    elif lang == "tr":
+        author = author.replace("OpenVAS Automation", "OpenVAS Otomasyonu")
+        author = author.replace("Instant Sync", "Hızlı Senkron")
+        author = author.replace("Periodic Scheduler", "Periyodik Zamanlayıcı")
+        author = author.replace("Scheduler", "Zamanlayıcı")
+        author = author.replace("OpenVAS Report", "OpenVAS Raporu")
+        author = author.replace("System Administrator", "Sistem Yöneticisi")
+    return author
+
+
+def localize_message(msg: str, lang: str = "en") -> str:
+    if not msg:
+        return ""
+    if lang == "en":
+        msg = re.sub(
+            r'Zaafiyet (.*?) taramasından içe aktarıldı\.\s*Atanan birim:\s*(.*?)\.\s*Termin:\s*([^.]+)\.?',
+            r'Vulnerability imported from \1 scan. Assigned department: \2. SLA Deadline: \3.',
+            msg
+        )
+        msg = msg.replace("OpenSSL paketi güncellendi ve servis yeniden başlatıldı.", "OpenSSL package updated and service restarted.")
+    elif lang == "tr":
+        msg = re.sub(
+            r'Vulnerability imported from (.*?) scan\.\s*Assigned department:\s*(.*?)\.\s*SLA Deadline:\s*([^.]+)\.?',
+            r'Zaafiyet \1 taramasından içe aktarıldı. Atanan birim: \2. Termin: \3.',
+            msg
+        )
+        msg = msg.replace("OpenSSL package updated and service restarted.", "OpenSSL paketi güncellendi ve servis yeniden başlatıldı.")
+    return msg
 
 
 def i18n_context_processor(request) -> Dict[str, Any]:
@@ -710,4 +830,6 @@ def i18n_context_processor(request) -> Dict[str, Any]:
         "loc_dept": lambda s: localize_department(s, lang),
         "loc_title": lambda s: localize_page_title(s, lang),
         "loc_user": lambda s: localize_user_name(s, lang),
+        "loc_author": lambda s: localize_author(s, lang),
+        "loc_msg": lambda s: localize_message(s, lang),
     }

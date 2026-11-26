@@ -35,7 +35,7 @@ async def import_page(request: Request, msg: str = None, count: int = 0, error: 
     })
 
 
-def insert_imported_vulns(vulns_list: list, author_name: str = "OpenVAS Otomasyonu", user_id: int = None) -> tuple:
+def insert_imported_vulns(vulns_list: list, author_name: str = "OpenVAS Automation", user_id: int = None) -> tuple:
     conn = get_db_connection()
     cursor = conn.cursor()
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -46,7 +46,7 @@ def insert_imported_vulns(vulns_list: list, author_name: str = "OpenVAS Otomasyo
         # Check if identical open vulnerability already exists
         cursor.execute("""
             SELECT id FROM vulnerabilities 
-            WHERE title = ? AND target_host = ? AND target_port = ? AND status != 'Kapatıldı'
+            WHERE title = ? AND target_host = ? AND target_port = ? AND status != 'Kapatıldı' AND status != 'Closed'
         """, (v["title"], v["target_host"], v.get("target_port", "")))
         if cursor.fetchone():
             existing_count += 1
@@ -65,7 +65,7 @@ def insert_imported_vulns(vulns_list: list, author_name: str = "OpenVAS Otomasyo
         )
         """, (
             record_no, v["title"], v["severity"], v["cvss_score"], v.get("cvss_vector", ""),
-            v["department"], v["assignee_name"], v["assignee_email"], v.get("status", "Açık"),
+            v["department"], v["assignee_name"], v["assignee_email"], v.get("status", "Open"),
             v["due_date"], None, now_str, now_str, v["tool_source"], v["target_host"],
             v.get("target_port", ""), v.get("target_os", ""), v["description"],
             v["threat_assessment"], v["remediation"], "", v.get("cve_id", ""), v.get("notes", "")
@@ -79,8 +79,8 @@ def insert_imported_vulns(vulns_list: list, author_name: str = "OpenVAS Otomasyo
             vuln_id,
             user_id,
             author_name,
-            "Kayıt Açıldı",
-            f"Zaafiyet {v['tool_source']} taramasından içe aktarıldı. Atanan birim: {v['department']} ({v['assignee_name']}). Termin: {v['due_date']}.",
+            "Record Created",
+            f"Vulnerability imported from {v['tool_source']} scan. Assigned department: {v['department']} ({v['assignee_name']}). SLA Deadline: {v['due_date']}.",
             now_str
         ))
         imported_count += 1
@@ -123,7 +123,7 @@ async def live_openvas_sync(
     conn.close()
 
     from app.scheduler import scheduler
-    ok, summary, new_count, total_findings = scheduler.perform_sync(trigger_source=f"Senkronizasyon ({current_user['full_name']})")
+    ok, summary, new_count, total_findings = scheduler.perform_sync(trigger_source=f"Instant Sync ({current_user['full_name']})")
 
     if not ok:
         return RedirectResponse(url=f"/import?error={summary}", status_code=303)
@@ -184,7 +184,7 @@ async def trigger_sync_now(request: Request):
         return RedirectResponse(url="/login", status_code=303)
 
     from app.scheduler import scheduler
-    ok, summary, new_count, total = scheduler.perform_sync(trigger_source=f"Hızlı Senkron ({current_user['full_name']})")
+    ok, summary, new_count, total = scheduler.perform_sync(trigger_source=f"Instant Sync ({current_user['full_name']})")
     
     if ok:
         return RedirectResponse(url=f"/import?msg={summary}&count={new_count}", status_code=303)
@@ -231,7 +231,7 @@ async def handle_file_upload(
         if not vulns:
             return RedirectResponse(url="/import?error=Dosyada+uygun+zaafiyet+bulunamadi", status_code=303)
 
-        new_count, exist_count = insert_imported_vulns(vulns, author_name=f"OpenVAS Raporu ({current_user['full_name']})", user_id=current_user["id"])
+        new_count, exist_count = insert_imported_vulns(vulns, author_name=f"OpenVAS Report ({current_user['full_name']})", user_id=current_user["id"])
         return RedirectResponse(url=f"/import?msg=success&count={new_count}", status_code=303)
 
     except Exception as e:
