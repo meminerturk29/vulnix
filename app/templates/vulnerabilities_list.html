@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-5 max-w-7xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
+    <div>
+      <h1 class="text-xl font-bold text-white tracking-tight">Zaafiyet Yönetim Tablosu</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Sorumlu birim atamaları, termin takibi ve durum analizi.</p>
+    </div>
+
+    <div class="flex items-center gap-2.5">
+      <a href="/import" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-semibold transition-all">
+        <i class="fa-solid fa-arrows-rotate text-cyan-400"></i>
+        <span>OpenVAS Senkron</span>
+      </a>
+      <a href="/vulnerabilities/new" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs shadow-md transition-all">
+        <i class="fa-solid fa-plus"></i>
+        <span>Yeni Zaafiyet</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <div class="bg-[#0e1320] p-4 rounded-xl border border-slate-800/80">
+    <form method="GET" action="/vulnerabilities" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end">
+      <!-- Search Input -->
+      <div class="md:col-span-2">
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Arama</label>
+        <div class="relative">
+          <input type="text" name="q" value="{{ selected_q }}" placeholder="Başlık, IP, Kayıt No veya CVE..." class="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+          <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-500 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Severity Filter -->
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Seviye</label>
+        <select name="severity" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          <option value="">Tümü</option>
+          <option value="Kritik" {{ 'selected' if selected_severity == 'Kritik' else '' }}>Kritik (9.0 - 10.0)</option>
+          <option value="Yüksek" {{ 'selected' if selected_severity == 'Yüksek' else '' }}>Yüksek (7.0 - 8.9)</option>
+          <option value="Orta" {{ 'selected' if selected_severity == 'Orta' else '' }}>Orta (4.0 - 6.9)</option>
+          <option value="Düşük" {{ 'selected' if selected_severity == 'Düşük' else '' }}>Düşük (0.1 - 3.9)</option>
+        </select>
+      </div>
+
+      <!-- Department Filter -->
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Sorumlu Birim</label>
+        <select name="department" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          <option value="">Tüm Birimler</option>
+          {% for dept in departments %}
+          <option value="{{ dept }}" {{ 'selected' if selected_department == dept else '' }}>{{ dept }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Durum</label>
+        <select name="status" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          <option value="">Tüm Durumlar</option>
+          <option value="Açık" {{ 'selected' if selected_status == 'Açık' else '' }}>Açık</option>
+          <option value="İnceleniyor" {{ 'selected' if selected_status == 'İnceleniyor' else '' }}>İnceleniyor</option>
+          <option value="Aksiyon Alındı" {{ 'selected' if selected_status == 'Aksiyon Alındı' else '' }}>Aksiyon Alındı</option>
+          <option value="Kapatıldı" {{ 'selected' if selected_status == 'Kapatıldı' else '' }}>Kapatıldı</option>
+          <option value="Kabul Edilen Risk" {{ 'selected' if selected_status == 'Kabul Edilen Risk' else '' }}>Kabul Edilen Risk</option>
+        </select>
+      </div>
+
+      <!-- Quick Toggles & Submit -->
+      <div class="sm:col-span-2 md:col-span-5 flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-800/80">
+        <div class="flex items-center gap-4">
+          <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-cyan-400">
+            <input type="checkbox" name="my_only" value="true" {{ 'checked' if my_only else '' }} class="rounded text-cyan-500 bg-slate-900 border-slate-800">
+            <span>Yalnızca Görevlerim</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-rose-400">
+            <input type="checkbox" name="overdue_only" value="true" {{ 'checked' if overdue_only else '' }} class="rounded text-rose-500 bg-slate-900 border-slate-800">
+            <span>SLA Aşımı (Gecikenler)</span>
+          </label>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <a href="/vulnerabilities" class="px-3 py-1 text-xs text-slate-400 hover:text-white transition-colors">Sıfırla</a>
+          <button type="submit" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition-all">
+            Filtrele ({{ vulns|length }})
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- 8-Column Enterprise Table -->
+  <div class="bg-[#0e1320] rounded-xl border border-slate-800/80 overflow-hidden shadow">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800/80">
+          <tr>
+            <th class="px-4 py-3">Kayıt No</th>
+            <th class="px-4 py-3" style="min-width: 220px;">Başlık</th>
+            <th class="px-4 py-3">Seviye</th>
+            <th class="px-4 py-3">Birim</th>
+            <th class="px-4 py-3">İlgili Kişi</th>
+            <th class="px-4 py-3">Durum Analizi</th>
+            <th class="px-4 py-3">Termin</th>
+            <th class="px-4 py-3">Kapanış Tarihi</th>
+            <th class="px-4 py-3 text-right">İşlem</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+          {% if vulns %}
+            {% for v in vulns %}
+            <tr class="hover:bg-slate-900/40 transition-colors">
+              <!-- 1. Kayıt No -->
+              <td class="px-4 py-3 font-mono font-bold text-cyan-400 whitespace-nowrap">
+                <a href="/vulnerabilities/{{ v.id }}" class="hover:underline">{{ v.record_no }}</a>
+                {% if v.image_path %}
+                  <span title="PoC Kanıtı Mevcut" class="text-emerald-400 ml-1"><i class="fa-solid fa-image"></i></span>
+                {% endif %}
+              </td>
+
+              <!-- 2. Başlık & Hedef -->
+              <td class="px-4 py-3">
+                <a href="/vulnerabilities/{{ v.id }}" class="font-semibold text-white hover:text-cyan-400 transition-colors block text-xs">
+                  {{ v.title }}
+                </a>
+                <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                  <span>{{ v.target_host }}{% if v.target_port %}:{{ v.target_port }}{% endif %}</span>
+                  {% if v.cve_id %}
+                    <span class="px-1.5 py-0.2 rounded bg-slate-900 text-slate-300 border border-slate-800 font-mono text-[10px]">{{ v.cve_id }}</span>
+                  {% endif %}
+                </div>
+              </td>
+
+              <!-- 3. Seviye -->
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold
+                  {{ 'bg-red-950/80 text-red-400 border border-red-800/60' if v.severity == 'Kritik' else
+                     'bg-orange-950/80 text-orange-400 border border-orange-800/60' if v.severity == 'Yüksek' else
+                     'bg-amber-950/80 text-amber-400 border border-amber-800/60' if v.severity == 'Orta' else
+                     'bg-blue-950/80 text-blue-400 border border-blue-800/60' if v.severity == 'Düşük' else
+                     'bg-slate-900 text-slate-400 border border-slate-800' }}">
+                  {{ v.severity }} ({{ v.cvss_score }})
+                </span>
+              </td>
+
+              <!-- 4. Birim (Zaafiyeti Kapatacak Birim) -->
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="text-slate-300 font-medium">{{ v.department or 'Atanmadı' }}</span>
+              </td>
+
+              <!-- 5. İlgili Kişi -->
+              <td class="px-4 py-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <div class="w-5 h-5 rounded bg-slate-800 flex items-center justify-center font-bold text-[9px] text-slate-300">
+                    {{ v.assignee_name[:2].upper() if v.assignee_name and v.assignee_name != 'Atanmamış' else '?' }}
+                  </div>
+                  <span class="text-slate-200">{{ v.assignee_name or 'Atanmamış' }}</span>
+                </div>
+              </td>
+
+              <!-- 6. Durum Analizi -->
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium
+                  {{ 'bg-red-950/60 text-red-300 border border-red-800/40' if v.status == 'Açık' else
+                     'bg-amber-950/60 text-amber-300 border border-amber-800/40' if v.status == 'İnceleniyor' else
+                     'bg-blue-950/60 text-blue-300 border border-blue-800/40' if v.status == 'Aksiyon Alındı' else
+                     'bg-emerald-950/60 text-emerald-300 border border-emerald-800/40' if v.status == 'Kapatıldı' else
+                     'bg-slate-900 text-slate-400 border border-slate-800' }}">
+                  <span class="w-1.5 h-1.5 rounded-full
+                    {{ 'bg-red-500' if v.status == 'Açık' else
+                       'bg-amber-500' if v.status == 'İnceleniyor' else
+                       'bg-blue-500' if v.status == 'Aksiyon Alındı' else
+                       'bg-emerald-500' if v.status == 'Kapatıldı' else 'bg-slate-500' }}"></span>
+                  {{ v.status }}
+                </span>
+              </td>
+
+              <!-- 7. Termin -->
+              <td class="px-4 py-3 whitespace-nowrap font-mono text-[11px]">
+                {% if v.is_overdue and v.status != 'Kapatıldı' %}
+                  <span class="text-red-400 font-bold" title="Termin süresi aşılmış!"><i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ v.due_date }}</span>
+                {% elif v.due_date %}
+                  <span class="text-slate-300">{{ v.due_date }}</span>
+                {% else %}
+                  <span class="text-slate-500">-</span>
+                {% endif %}
+              </td>
+
+              <!-- 8. Kapanış Tarihi -->
+              <td class="px-4 py-3 whitespace-nowrap font-mono text-[11px]">
+                {% if v.closed_date %}
+                  <span class="text-emerald-400 font-semibold">{{ v.closed_date[:10] }}</span>
+                {% else %}
+                  <span class="text-slate-600">-</span>
+                {% endif %}
+              </td>
+
+              <!-- İşlemler -->
+              <td class="px-4 py-3 text-right whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5">
+                  {% if v.status != 'Kapatıldı' and v.assignee_user_id != current_user.id %}
+                  <form method="POST" action="/vulnerabilities/{{ v.id }}/claim" class="inline">
+                    <button type="submit" title="Bu Görevi Üstlen" class="px-2 py-1 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-400 border border-cyan-800 text-[10px] font-semibold transition-colors">
+                      Üstlen
+                    </button>
+                  </form>
+                  {% endif %}
+                  <a href="/vulnerabilities/{{ v.id }}" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-semibold transition-colors">
+                    Detay &rarr;
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="9" class="px-4 py-12 text-center text-slate-500">
+                <i class="fa-regular fa-folder-open text-2xl text-slate-600 mb-2 block"></i>
+                Filtreye uygun zaafiyet kaydı bulunamadı.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

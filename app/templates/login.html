@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} - VULNIX</title>
+  <link rel="icon" type="image/svg+xml" href="/static/img/vulnix_logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex items-center justify-center p-4 relative antialiased">
+
+  <div class="max-w-sm w-full space-y-6 relative z-10">
+
+    <!-- Brand Header -->
+    <div class="text-center space-y-2">
+      <div class="inline-flex w-14 h-14 rounded-2xl bg-slate-900 border border-cyan-500/30 items-center justify-center shadow-xl shadow-cyan-500/10 p-2 mx-auto">
+        <img src="/static/img/vulnix_logo.svg" alt="Vulnix Logo" class="w-10 h-10 object-contain">
+      </div>
+      <div>
+        <h1 class="text-2xl font-black text-white tracking-wider flex items-center justify-center gap-2">
+          <span>VULNIX</span>
+          <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">SEC</span>
+        </h1>
+        <p class="text-[10px] font-mono text-slate-400 tracking-widest uppercase mt-0.5" lang="en">SECURITY OPERATIONS</p>
+      </div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="bg-[#0e1320] border border-slate-800/80 rounded-2xl p-6 shadow-xl space-y-4">
+      <div>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Giriş Yap</h2>
+      </div>
+
+      {% if msg %}
+      <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-400 shrink-0"></i>
+        <span>{{ msg }}</span>
+      </div>
+      {% endif %}
+
+      {% if error %}
+      <div class="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation text-rose-400 shrink-0"></i>
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/login" class="space-y-3.5">
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Kullanıcı Adı</label>
+          <input type="text" name="username" required value="{{ entered_username if entered_username else '' }}" placeholder="Kullanıcı adı" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Parola</label>
+          <input type="password" name="password" required placeholder="••••••••••••" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow transition-all">
+          Giriş Yap
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</body>
+</html>

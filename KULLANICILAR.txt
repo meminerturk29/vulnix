@@ -1,0 +1,77 @@
+================================================================================
+                    VULNIX - KULLANICI VE HESAP BİLGİLERİ
+================================================================================
+
+Bu dosya, VULNIX Kurumsal Zaafiyet Yönetim Sistemi ve bağlı servislerin varsayılan 
+kullanıcı adı ve parola bilgilerini içerir.
+
+--------------------------------------------------------------------------------
+1. SİSTEM KULLANICILARI VE PAROLALARI
+--------------------------------------------------------------------------------
+
+[1] YÖNETİCİ HESABI (Tüm Yetkilere Sahip)
+    - Ad Soyad       : Sistem Yöneticisi (Admin)
+    - Kullanıcı Adı  : admin
+    - Parola         : admin123
+    - E-Posta        : admin@vms.local
+    - Rol            : Yönetici (admin)
+    - Birim          : Bilgi Güvenliği / SOC
+    - Yetkiler       : Tüm zaafiyetleri görme, düzenleme, silme, kullanıcı 
+                       yönetimi (/users), OpenVAS zamanlayıcı ve SMTP ayarları.
+
+[2] YAZILIM GELİŞTİRME ANALİSTİ
+    - Ad Soyad       : Ahmet Yılmaz
+    - Kullanıcı Adı  : ahmet.yilmaz
+    - Parola         : user123
+    - E-Posta        : ahmet.yilmaz@sirket.com
+    - Rol            : Analist / Çalışan (user)
+    - Birim          : Yazılım Geliştirme
+
+[3] SİSTEM YÖNETİMİ ANALİSTİ
+    - Ad Soyad       : Burak Demir
+    - Kullanıcı Adı  : burak.demir
+    - Parola         : user123
+    - E-Posta        : burak.demir@sirket.com
+    - Rol            : Analist / Çalışan (user)
+    - Birim          : Sistem Yönetimi
+
+[4] VERİTABANI ANALİSTİ
+    - Ad Soyad       : Canan Kaya
+    - Kullanıcı Adı  : canan.kaya
+    - Parola         : user123
+    - E-Posta        : canan.kaya@sirket.com
+    - Rol            : Analist / Çalışan (user)
+    - Birim          : Veritabanı Yönetimi
+
+[5] AĞ VE NETWORK GÜVENLİĞİ ANALİSTİ
+    - Ad Soyad       : Deniz Arslan
+    - Kullanıcı Adı  : deniz.arslan
+    - Parola         : user123
+    - E-Posta        : deniz.arslan@sirket.com
+    - Rol            : Analist / Çalışan (user)
+    - Birim          : Network/Ağ Güvenliği
+
+[6] DEVOPS VE BULUT ALTYAPI ANALİSTİ
+    - Ad Soyad       : Eren Yıldız
+    - Kullanıcı Adı  : eren.yildiz
+    - Parola         : user123
+    - E-Posta        : eren.yildiz@sirket.com
+    - Rol            : Analist / Çalışan (user)
+    - Birim          : DevOps
+
+--------------------------------------------------------------------------------
+2. OPENVAS / GREENBONE BAĞLANTI BİLGİLERİ (VMware NAT)
+--------------------------------------------------------------------------------
+    - Sunucu URL     : https://10.10.1.12
+    - Kullanıcı Adı  : admin
+    - Parola         : admin
+    - API Protokolü  : Greenbone OS 25 / GSAD 27 Web & GMP API
+    - Durum          : Sistemde kalıcı olarak kayıtlıdır (otomatik bağlanır).
+
+--------------------------------------------------------------------------------
+3. NOTLAR VE GÜVENLİK
+--------------------------------------------------------------------------------
+* Canlı ortamda (prodüksiyon) kullanırken varsayılan parolaları 'Kullanıcı Yönetimi'
+  (/users) ekranından güncelleyiniz.
+* Şifreler veritabanında PBKDF2 (SHA-256) ve güvenli salt ile hashlenerek saklanır.
+================================================================================

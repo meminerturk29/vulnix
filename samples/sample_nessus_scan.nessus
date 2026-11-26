@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<NessusClientData_v2>
+  <Report name="Corporate External Infrastructure Penetration Test" xmlns:cm="http://www.nessus.org/cm">
+    <ReportHost name="192.168.1.100">
+      <HostProperties>
+        <tag name="host-ip">192.168.1.100</tag>
+        <tag name="host-fqdn">crm.sirket.com</tag>
+        <tag name="operating-system">Linux Ubuntu 22.04 LTS</tag>
+      </HostProperties>
+      <ReportItem port="443" svc_name="https" protocol="tcp" severity="4" pluginID="156014" pluginName="Apache Struts 2 Uzaktan Kod Yürütme (S2-061 / CVE-2020-17530)">
+        <description>Apache Struts 2 framework üzerinde OGNL değerlendirmesindeki yetersiz filtreleme sebebiyle yetkisiz saldırganların hedef sunucuda komut çalıştırmasına izin veren RCE zafiyeti bulunmuştur.</description>
+        <solution>Apache Struts kütüphanesini 2.5.26 veya sonraki sürüme derhal güncelleyiniz.</solution>
+        <risk_factor>Critical</risk_factor>
+        <cvss3_base_score>9.8</cvss3_base_score>
+        <cvss3_vector>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector>
+        <cve>CVE-2020-17530</cve>
+        <synopsis>Hedef web sunucusu üzerinde uzaktan kod yürütme mümkündür.</synopsis>
+      </ReportItem>
+      <ReportItem port="443" svc_name="https" protocol="tcp" severity="3" pluginID="104001" pluginName="Web Uygulamasında SQL Injection Açığı (Kimlik Doğrulama Bypass)">
+        <description>Giriş (login) formu parametresinde kullanıcı girdisi filtrelenmeden SQL sorgusuna dahil edilmektedir. ' OR '1'='1 vektörü ile admin girişi sağlanabilmektedir.</description>
+        <solution>Tüm veritabanı sorgularında Parametrik (Prepared Statements) yapı kullanınız. ORM katmanını güncelleyiniz.</solution>
+        <risk_factor>High</risk_factor>
+        <cvss3_base_score>8.9</cvss3_base_score>
+        <cvss3_vector>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N</cvss3_vector>
+        <cve>CVE-2022-34512</cve>
+        <synopsis>Yetkisiz veri tabanı manipülasyonu ve bypass açığı.</synopsis>
+      </ReportItem>
+    </ReportHost>
+    <ReportHost name="10.20.0.15">
+      <HostProperties>
+        <tag name="host-ip">10.20.0.15</tag>
+        <tag name="host-fqdn">dc-ad01.sirket.local</tag>
+        <tag name="operating-system">Microsoft Windows Server 2019 Datacenter</tag>
+      </HostProperties>
+      <ReportItem port="445" svc_name="cifs" protocol="tcp" severity="4" pluginID="138847" pluginName="Zerologon: Netlogon Ayrıcalık Yükseltme (CVE-2020-1472)">
+        <description>Microsoft Netlogon protokolünde zayıf kriptografi kullanımı sebebiyle, etki alanı denetleyicisi (Domain Controller) parolasını sıfırlayarak Domain Admin yetkisi elde edilebilmektedir.</description>
+        <solution>Microsoft KB4557222 güvenlik yamasını yükleyiniz ve Güvenli RPC zorunluluğunu aktif ediniz.</solution>
+        <risk_factor>Critical</risk_factor>
+        <cvss3_base_score>10.0</cvss3_base_score>
+        <cvss3_vector>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</cvss3_vector>
+        <cve>CVE-2020-1472</cve>
+        <synopsis>Active Directory Domain Controller tam ele geçirilme riski.</synopsis>
+      </ReportItem>
+    </ReportHost>
+  </Report>
+</NessusClientData_v2>

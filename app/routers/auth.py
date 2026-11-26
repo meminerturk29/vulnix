@@ -1,0 +1,65 @@
+from fastapi import APIRouter, Request, Form, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from app.auth import (
+    authenticate_user, create_session, delete_session,
+    get_current_user, SESSION_COOKIE_NAME, SESSION_DURATION_HOURS
+)
+import os
+
+router = APIRouter()
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
+
+
+@router.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request, error: str = None, msg: str = None, next: str = "/"):
+    current_user = await get_current_user(request)
+    if current_user:
+        return RedirectResponse(url="/", status_code=303)
+
+    return templates.TemplateResponse(request=request, name="login.html", context={
+        "page_title": "Sisteme Giriş Yap",
+        "error": error,
+        "msg": "Oturumunuz başarıyla kapatıldı." if msg == "logged_out" else msg,
+        "next": next
+    })
+
+
+@router.post("/login")
+async def login_submit(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+    next: str = Form("/")
+):
+    user = authenticate_user(username.strip(), password)
+    if not user:
+        return templates.TemplateResponse(request=request, name="login.html", context={
+            "page_title": "Sisteme Giriş Yap",
+            "error": "Kullanıcı adı veya parola hatalı! Lütfen tekrar deneyiniz.",
+            "next": next,
+            "entered_username": username
+        }, status_code=400)
+
+    session_id = create_session(user["id"])
+    redirect_url = next if next and next.startswith("/") else "/"
+    response = RedirectResponse(url=redirect_url, status_code=303)
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=session_id,
+        max_age=SESSION_DURATION_HOURS * 3600,
+        httponly=True,
+        samesite="lax"
+    )
+    return response
+
+
+@router.get("/logout")
+@router.post("/logout")
+async def logout(request: Request):
+    session_id = request.cookies.get(SESSION_COOKIE_NAME)
+    if session_id:
+        delete_session(session_id)
+    response = RedirectResponse(url="/login?msg=logged_out", status_code=303)
+    response.delete_cookie(SESSION_COOKIE_NAME)
+    return response

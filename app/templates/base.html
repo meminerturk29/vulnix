@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} - VULNIX</title>
+  <link rel="icon" type="image/svg+xml" href="/static/img/vulnix_logo.svg">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-[#080c15] border-r border-slate-800/80 flex flex-col shrink-0">
+    <!-- Brand / Logo -->
+    <a href="/" class="h-16 flex items-center px-5 border-b border-slate-800/80 gap-3 hover:bg-slate-900/30 transition-colors">
+      <div class="w-9 h-9 rounded-xl bg-slate-900 border border-cyan-500/30 flex items-center justify-center shadow-lg shadow-cyan-500/10 p-1.5 shrink-0">
+        <img src="/static/img/vulnix_logo.svg" alt="Vulnix Logo" class="w-full h-full object-contain">
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-sm font-extrabold text-white tracking-wider flex items-center gap-1.5">
+          <span>VULNIX</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">SEC</span>
+        </h1>
+        <p class="text-[9px] text-slate-400 font-mono tracking-widest leading-tight truncate" lang="en">SECURITY OPERATIONS</p>
+      </div>
+    </a>
+
+    <!-- User Profile Card -->
+    {% if current_user %}
+    <div class="p-3 mx-3 my-3 rounded-xl bg-slate-900/60 border border-slate-800/70 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br {{ 'from-purple-500 to-indigo-600' if current_user.role == 'admin' else 'from-cyan-500 to-blue-600' }} flex items-center justify-center font-bold text-white text-xs shrink-0 shadow">
+        {{ current_user.full_name[:2].upper() }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs font-bold text-white truncate">{{ current_user.full_name }}</div>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase {{ 'bg-purple-950/80 text-purple-300 border border-purple-800/50' if current_user.role == 'admin' else 'bg-cyan-950/80 text-cyan-300 border border-cyan-800/50' }}">
+            {{ 'Yönetici' if current_user.role == 'admin' else 'Analist' }}
+          </span>
+          <span class="text-[10px] text-slate-400 truncate">{{ current_user.department or 'Siber Güvenlik' }}</span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation links -->
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+      <div class="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Navigasyon</div>
+      
+      <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/' else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="/vulnerabilities" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/vulnerabilities' and 'my_only=true' not in request.url.query else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-table-list w-4 text-center"></i>
+        <span>Zaafiyet Listesi</span>
+      </a>
+
+      <a href="/vulnerabilities?my_only=true" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if 'my_only=true' in request.url.query else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-user-check w-4 text-center"></i>
+        <span>Görevlerim</span>
+      </a>
+
+      <a href="/vulnerabilities/new" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path == '/vulnerabilities/new' else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-circle-plus w-4 text-center"></i>
+        <span>Yeni Zaafiyet</span>
+      </a>
+
+      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Entegrasyon</div>
+
+      <a href="/import" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path.startswith('/import') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-satellite-dish w-4 text-center"></i>
+        <span>OpenVAS Senkronizasyon</span>
+      </a>
+
+      <a href="/reports/executive" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' if request.url.path.startswith('/reports') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-file-waveform w-4 text-center"></i>
+        <span>Yönetici Raporu</span>
+      </a>
+
+      {% if current_user and current_user.role == 'admin' %}
+      <div class="px-3 pt-4 pb-1 text-[10px] font-bold text-purple-400 uppercase tracking-wider">Yönetim</div>
+
+      <a href="/users" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-purple-950/60 text-purple-300 border border-purple-800/50' if request.url.path.startswith('/users') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-users-gear w-4 text-center"></i>
+        <span>Kullanıcı Yönetimi</span>
+      </a>
+
+      <a href="/settings" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all {{ 'bg-purple-950/60 text-purple-300 border border-purple-800/50' if request.url.path.startswith('/settings') else 'text-slate-400 hover:text-white hover:bg-slate-900/60' }}">
+        <i class="fa-solid fa-sliders w-4 text-center"></i>
+        <span>Sistem Ayarları</span>
+      </a>
+      {% endif %}
+    </nav>
+
+    <!-- Logout -->
+    <div class="p-3 border-t border-slate-800/80 bg-[#080c15]">
+      <a href="/logout" class="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-rose-950/50 text-slate-400 hover:text-rose-300 border border-slate-800/80 text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Çıkış Yap</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Topbar -->
+    <header class="h-16 bg-[#080c15]/90 border-b border-slate-800/80 flex items-center justify-between px-8 backdrop-blur sticky top-0 z-20">
+      <div>
+        <h2 class="text-sm font-bold text-white tracking-wide uppercase">{{ page_title }}</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/import" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all">
+          <i class="fa-solid fa-arrows-rotate text-cyan-400"></i>
+          <span>OpenVAS Senkron</span>
+        </a>
+        <a href="/vulnerabilities/new" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-plus"></i>
+          <span>Zaafiyet Ekle</span>
+        </a>
+
+        <!-- Kullanıcı Durum İbresi & Çıkış Yap / Giriş Yap -->
+        <div class="h-6 w-px bg-slate-800 mx-1"></div>
+
+        {% if current_user %}
+        <div class="flex items-center gap-2.5">
+          <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-800">
+            <div class="w-6 h-6 rounded-md bg-gradient-to-tr {{ 'from-purple-500 to-indigo-600' if current_user.role == 'admin' else 'from-cyan-500 to-blue-600' }} flex items-center justify-center font-bold text-white text-[10px] shrink-0">
+              {{ current_user.full_name[:2].upper() }}
+            </div>
+            <div class="text-left hidden md:block">
+              <span class="text-xs font-bold text-white block leading-none truncate max-w-[120px]">{{ current_user.full_name }}</span>
+              <span class="text-[9px] font-mono {{ 'text-purple-400' if current_user.role == 'admin' else 'text-cyan-400' }} leading-none">
+                {{ 'Yönetici' if current_user.role == 'admin' else 'Analist' }}
+              </span>
+            </div>
+          </div>
+
+          <a href="/logout" title="Sistemden Güvenli Çıkış Yap" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 text-xs font-semibold shadow-sm transition-all">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span class="hidden sm:inline">Çıkış Yap</span>
+          </a>
+        </div>
+        {% else %}
+        <a href="/login" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow transition-all">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Giriş Yap</span>
+        </a>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="flex-1 overflow-y-auto p-8 bg-[#0b0f19]">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

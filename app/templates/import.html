@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
+    <div>
+      <h1 class="text-xl font-bold text-white tracking-tight">OpenVAS Entegrasyonu & Zamanlayıcı</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Otomatik periyodik zaafiyet kontrolü ve canlı tarama senkronizasyonu.</p>
+    </div>
+
+    {% if current_user and current_user.role == 'admin' %}
+    <form method="POST" action="/import/clear-vulnerabilities" onsubmit="return confirm('Tüm zaafiyet kayıtları temizlensin mi?');">
+      <button type="submit" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/60 text-rose-400 border border-slate-800 text-xs font-semibold transition-all flex items-center gap-1.5">
+        <i class="fa-solid fa-trash-can"></i>
+        <span>Veritabanını Sıfırla</span>
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- Feedback alerts -->
+  {% if msg %}
+  <div class="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+      <span>{{ msg }}</span>
+    </div>
+    <a href="/vulnerabilities" class="text-xs text-emerald-400 font-semibold underline">Zaafiyet Tablosuna Git &rarr;</a>
+  </div>
+  {% elif error %}
+  <div class="p-3.5 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
+    <i class="fa-solid fa-triangle-exclamation text-rose-400 text-base"></i>
+    <span>{{ error }}</span>
+  </div>
+  {% endif %}
+
+  <!-- CARD 1: Otomatik Zamanlayıcı & Canlı Durum Kartı -->
+  <div class="bg-[#0e1320] p-6 rounded-2xl border border-slate-800/80 shadow space-y-5">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center text-cyan-400 text-lg">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm font-bold text-white">Otomatik Zaafiyet Zamanlayıcısı</h2>
+            {% if settings.get('openvas_auto_sync', '1') == '1' %}
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Aktif (Her {{ settings.get('openvas_sync_interval', '15') }} Dk)
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-800">
+              Duraklatıldı
+            </span>
+            {% endif %}
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">OpenVAS sunucusu periyodik olarak sorgulanır, yeni bulunan riskler otomatik aktarılır.</p>
+        </div>
+      </div>
+
+      <!-- One-Click Instant Sync Button -->
+      <form method="POST" action="/import/trigger-sync" class="shrink-0">
+        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-md transition-all">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Hemen Senkronize Et</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Metrics Bar -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        <span class="text-[10px] uppercase font-semibold text-slate-500 block">Hedef Sunucu</span>
+        <span class="font-mono text-xs font-bold text-cyan-400 mt-0.5 block truncate">{{ settings.get('openvas_url', 'https://10.10.1.12') }}</span>
+      </div>
+
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        <span class="text-[10px] uppercase font-semibold text-slate-500 block">Kayıtlı Kimlik</span>
+        <span class="font-mono text-xs text-slate-300 mt-0.5 block">{{ settings.get('openvas_username', 'admin') }} • Parola Kayıtlı</span>
+      </div>
+
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        <span class="text-[10px] uppercase font-semibold text-slate-500 block">Son Kontrol Zamanı</span>
+        <span class="font-mono text-xs text-slate-300 mt-0.5 block truncate">{{ settings.get('openvas_last_sync') or 'Henüz Çalışmadı' }}</span>
+      </div>
+
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        <span class="text-[10px] uppercase font-semibold text-slate-500 block">Son Durum / Sonuç</span>
+        <span class="text-xs text-emerald-400 font-semibold mt-0.5 block truncate" title="{{ settings.get('openvas_last_status', 'Hazır') }}">
+          {{ settings.get('openvas_last_status') or 'Hazır' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Zamanlayıcı & Kalıcı Parola Yapılandırması -->
+  <div class="bg-[#0e1320] p-6 rounded-2xl border border-slate-800/80 shadow space-y-4">
+    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-800/80">
+      <i class="fa-solid fa-sliders text-cyan-400 text-sm"></i>
+      <h3 class="text-xs font-bold text-white uppercase tracking-wider">Zamanlayıcı ve Kalıcı Bağlantı Ayarları</h3>
+    </div>
+
+    <form method="POST" action="/import/save-timer-settings" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">OpenVAS URL (NAT IP)</label>
+          <input type="text" name="server_url" value="{{ settings.get('openvas_url', 'https://10.10.1.12') }}" required class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">Kullanıcı Adı</label>
+          <input type="text" name="username" value="{{ settings.get('openvas_username', 'admin') }}" required class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 mb-1">
+            Giriş Parolası
+            {% if settings.get('openvas_password') %}
+            <span class="text-emerald-400 text-[10px] font-normal ml-1">● Kayıtlı</span>
+            {% endif %}
+          </label>
+          <input type="password" name="password" placeholder="{{ '•••••••• (Kayıtlı, değiştirmek için yazın)' if settings.get('openvas_password') else 'Parola giriniz' }}" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+        </div>
+      </div>
+
+      <!-- Timer & Interval Options -->
+      <div class="p-3.5 bg-slate-900/50 rounded-xl border border-slate-800/80 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <label class="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-white">
+            <input type="checkbox" name="auto_sync" value="1" {{ 'checked' if settings.get('openvas_auto_sync', '1') == '1' else '' }} class="w-4 h-4 rounded bg-slate-900 border-slate-800 text-cyan-500">
+            <span>Arka Planda Otomatik Zamanlayıcıyı Etkinleştir</span>
+          </label>
+
+          <div class="flex items-center gap-2">
+            <label class="text-[11px] text-slate-400 whitespace-nowrap">Kontrol Sıklığı:</label>
+            <select name="sync_interval" class="px-3 py-1 bg-slate-950 border border-slate-800 rounded-lg text-xs text-cyan-400 font-bold focus:outline-none focus:border-cyan-500">
+              <option value="5" {{ 'selected' if settings.get('openvas_sync_interval') == '5' else '' }}>5 Dakikada Bir</option>
+              <option value="15" {{ 'selected' if settings.get('openvas_sync_interval', '15') == '15' else '' }}>15 Dakikada Bir (Önerilen)</option>
+              <option value="30" {{ 'selected' if settings.get('openvas_sync_interval') == '30' else '' }}>30 Dakikada Bir</option>
+              <option value="60" {{ 'selected' if settings.get('openvas_sync_interval') == '60' else '' }}>1 Saatte Bir</option>
+              <option value="360" {{ 'selected' if settings.get('openvas_sync_interval') == '360' else '' }}>6 Saatte Bir</option>
+              <option value="1440" {{ 'selected' if settings.get('openvas_sync_interval') == '1440' else '' }}>Günde 1 Kez</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+          <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-400">
+            <input type="checkbox" name="include_logs" value="1" {{ 'checked' if settings.get('openvas_include_logs') == '1' else '' }} class="rounded bg-slate-900 border-slate-800 text-cyan-500">
+            <span>Bilgi / Log seviyesindeki (CVSS 0.0) kayıtları da dahil et</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow transition-all flex items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Zamanlayıcı ve Parolayı Kaydet</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Secondary: Manuel Dosya & Ağ Testi -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Card: XML Dosya Yükleme -->
+    <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80 space-y-4">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-slate-800/80">
+        <i class="fa-solid fa-file-code text-cyan-400 text-sm"></i>
+        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Manuel XML Raporu Yükle</h3>
+      </div>
+
+      <form method="POST" action="/import/upload" enctype="multipart/form-data" class="space-y-3">
+        <input type="hidden" name="tool_type" value="openvas">
+
+        <div>
+          <input type="file" name="scan_file" accept=".xml" required class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-slate-800 file:text-slate-200">
+        </div>
+
+        <button type="submit" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-upload"></i>
+          <span>Dosyadan İçe Aktar</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Card: Ağ Bağlantı Testi -->
+    <div class="bg-[#0e1320] p-5 rounded-2xl border border-slate-800/80 space-y-4">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-slate-800/80">
+        <i class="fa-solid fa-network-wired text-cyan-400 text-sm"></i>
+        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Ağ Bağlantı Testi</h3>
+      </div>
+
+      <form method="POST" action="/import/test-api" class="space-y-3">
+        <input type="hidden" name="api_type" value="openvas">
+        <div>
+          <input type="text" name="server_url" value="{{ settings.get('openvas_url', 'https://10.10.1.12') }}" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <button type="submit" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-plug"></i>
+          <span>Port ve Erişimi Test Et</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

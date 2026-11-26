@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} - {{ company_name }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      color: #e2e8f0;
+    }
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .card-print {
+        border: 1px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
+      }
+      .text-print-dark {
+        color: #0f172a !important;
+      }
+      .text-print-muted {
+        color: #475569 !important;
+      }
+      .bg-print-gray {
+        background-color: #f8fafc !important;
+      }
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+
+  <!-- Print Action Toolbar (Hidden in Print) -->
+  <div class="max-w-5xl mx-auto mb-6 flex items-center justify-between no-print">
+    <a href="/" class="inline-flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Paneline Geri Dön</span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg shadow-purple-900/40 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-print"></i>
+        <span>Raporu Yazdır / PDF Olarak Kaydet</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Document Container -->
+  <div class="max-w-5xl mx-auto bg-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-10 card-print">
+
+    <!-- Report Cover / Header -->
+    <div class="pb-8 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-widest">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Kurumsal Siber Güvenlik Birimi</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-white tracking-tight text-print-dark">Yönetici Özeti & Zaafiyet Değerlendirme Raporu</h1>
+        <p class="text-sm text-slate-400 text-print-muted">Bilgi Sistemleri Altyapısı Güvenlik Taramaları ve Risk Analiz Raporu</p>
+      </div>
+
+      <div class="text-left md:text-right shrink-0 space-y-1 text-xs text-slate-400 text-print-muted">
+        <div><strong>Kurum:</strong> {{ company_name }}</div>
+        <div><strong>Rapor Tarihi:</strong> {{ report_date }}</div>
+        <div><strong>Gizlilik Seviyesi:</strong> <span class="text-rose-400 font-bold">HASSAS / KURUM İÇİ</span></div>
+      </div>
+    </div>
+
+    <!-- Section 1: Yönetici Özeti (Executive Summary) -->
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 pb-2 border-b border-slate-800">
+        <div class="w-8 h-8 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold text-sm">1</div>
+        <h2 class="text-lg font-bold text-white text-print-dark">Yönetici Özeti (Executive Summary)</h2>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-300 text-print-dark leading-relaxed">
+        Bu rapor, kurum bünyesinde barındırılan sunucular, web uygulamaları, ağ bileşenleri ve veritabanı altyapısında gerçekleştirilen güvenlik taramaları (Nessus, OpenVAS ve Manuel Pentest testleri) sonucunda elde edilen risklerin ve çözüm önerilerinin üst düzey bir özetidir.
+      </p>
+
+      <!-- KPI Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center card-print">
+          <span class="text-[11px] font-semibold text-slate-400 text-print-muted uppercase">Toplam Bulgular</span>
+          <div class="text-2xl font-extrabold text-white text-print-dark mt-1">{{ total_vulns }}</div>
+          <span class="text-[10px] text-slate-500">Tespit edilen risk</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-red-950/30 border border-red-900/40 text-center card-print">
+          <span class="text-[11px] font-semibold text-red-400 uppercase">Kritik Riskler</span>
+          <div class="text-2xl font-extrabold text-red-500 mt-1">{{ sev_counts['Kritik'] }}</div>
+          <span class="text-[10px] text-red-400">Acil müdahale gerekir</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-orange-950/30 border border-orange-900/40 text-center card-print">
+          <span class="text-[11px] font-semibold text-orange-400 uppercase">Yüksek Riskler</span>
+          <div class="text-2xl font-extrabold text-orange-400 mt-1">{{ sev_counts['Yüksek'] }}</div>
+          <span class="text-[10px] text-orange-400">Yüksek öncelikli</span>
+        </div>
+
+        <div class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-900/40 text-center card-print">
+          <span class="text-[11px] font-semibold text-emerald-400 uppercase">Kapatılan Açıklar</span>
+          <div class="text-2xl font-extrabold text-emerald-400 mt-1">{{ closed_vulns }}</div>
+          <span class="text-[10px] text-emerald-400">{{ open_vulns }} açık devam ediyor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Kullanılan Araçlar (Tools Used) -->
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 pb-2 border-b border-slate-800">
+        <div class="w-8 h-8 rounded-lg bg-amber-950 text-amber-400 flex items-center justify-center font-bold text-sm">2</div>
+        <h2 class="text-lg font-bold text-white text-print-dark">Kullanılan Tarama Araçları ve Metodoloji</h2>
+      </div>
+
+      <p class="text-xs text-slate-300 text-print-dark">
+        Sistem denetimleri sırasında aşağıdaki endüstri standardı güvenlik tarama teknolojileri ve pentest yöntemleri kullanılmıştır:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {% for t in tools %}
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 card-print">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-sm text-cyan-400 text-print-dark">
+              {% if t.tool_source == 'Nessus' %}<i class="fa-solid fa-radar mr-1 text-amber-400"></i> Nessus Professional
+              {% elif t.tool_source == 'OpenVAS' %}<i class="fa-solid fa-satellite-dish mr-1 text-emerald-400"></i> OpenVAS / Greenbone
+              {% else %}<i class="fa-solid fa-user-ninja mr-1 text-purple-400"></i> Manuel Pentest (Nmap/Burp)
+              {% endif %}
+            </span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">{{ t.count }} Bulgu</span>
+          </div>
+          <p class="text-[11px] text-slate-400 text-print-muted mt-2">
+            {% if t.tool_source == 'Nessus' %}
+              CVE veritabanı entegrasyonlu derinlemesine zafiyet ve konfigürasyon denetimi.
+            {% elif t.tool_source == 'OpenVAS' %}
+              Açık kaynak NVTs kütüphanesi ile network servisleri ve açık port güvenlik taraması.
+            {% else %}
+              Uzman güvenlik mühendisleri tarafından gerçekleştirilen manuel doğrulama ve PoC exploit testi.
+            {% endif %}
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Section 3: Hedef Bilgisi (Target Assets) -->
+    <div class="space-y-4 page-break">
+      <div class="flex items-center gap-3 pb-2 border-b border-slate-800">
+        <div class="w-8 h-8 rounded-lg bg-blue-950 text-blue-400 flex items-center justify-center font-bold text-sm">3</div>
+        <h2 class="text-lg font-bold text-white text-print-dark">Hedef Bilgisi ve Varlık Risk Envanteri</h2>
+      </div>
+
+      <p class="text-xs text-slate-300 text-print-dark">
+        Taramaya dahil edilen kritik IP, sunucu, işletim sistemleri ve risk barındıran hedef cihazların dağılımı:
+      </p>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900 text-slate-300 uppercase font-semibold text-print-dark border-b border-slate-800">
+            <tr>
+              <th class="p-3">Hedef IP / Sunucu Adı</th>
+              <th class="p-3">İşletim Sistemi / Rol</th>
+              <th class="p-3">Sorumlu Birim</th>
+              <th class="p-3 text-center">Toplam Zaafiyet</th>
+              <th class="p-3 text-center">Kritik Seviye</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300 text-print-dark">
+            {% for target in targets %}
+            <tr class="hover:bg-slate-900/50">
+              <td class="p-3 font-mono font-semibold text-cyan-300 text-print-dark">{{ target.target_host }}</td>
+              <td class="p-3 text-slate-400 text-print-muted">{{ target.target_os or 'Belirtilmedi' }}</td>
+              <td class="p-3 font-medium">{{ target.department }}</td>
+              <td class="p-3 text-center font-bold">{{ target.vuln_count }}</td>
+              <td class="p-3 text-center">
+                {% if target.critical_count > 0 %}
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-950 text-red-400 border border-red-800">
+                  {{ target.critical_count }} Kritik
+                </span>
+                {% else %}
+                <span class="text-slate-500">0</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 4: Ana Bulgular & Tehdit Değerlendirmesi -->
+    <div class="space-y-6">
+      <div class="flex items-center gap-3 pb-2 border-b border-slate-800">
+        <div class="w-8 h-8 rounded-lg bg-red-950 text-red-400 flex items-center justify-center font-bold text-sm">4</div>
+        <div>
+          <h2 class="text-lg font-bold text-white text-print-dark">Ana Bulgular ve Tehdit Değerlendirmesi</h2>
+          <span class="text-xs text-rose-400 font-semibold uppercase">Eğer Bu Açıklar İstismar Edilirse (Hacklenirse) Ne Olabilir?</span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        {% for vuln in key_findings %}
+        <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 card-print space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold text-cyan-400 text-print-dark">{{ vuln.record_no }}</span>
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold {{ 'badge-critical' if vuln.severity == 'Kritik' else 'badge-high' }}">
+                {{ vuln.severity }} (CVSS {{ vuln.cvss_score }})
+              </span>
+              {% if vuln.cve_id %}
+              <span class="font-mono text-xs text-slate-400">{{ vuln.cve_id }}</span>
+              {% endif %}
+            </div>
+
+            <div class="text-xs text-slate-400 text-print-muted">
+              Hedef: <strong class="text-slate-200 text-print-dark">{{ vuln.target_host }}</strong>
+              {% if vuln.target_port %}:{{ vuln.target_port }}{% endif %}
+            </div>
+          </div>
+
+          <h3 class="text-base font-bold text-white text-print-dark">{{ vuln.title }}</h3>
+
+          <!-- Tehdit Senaryosu Box -->
+          <div class="p-3.5 rounded-xl bg-red-950/20 border border-red-900/40 text-xs text-red-200 card-print">
+            <div class="font-bold text-red-400 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-skull-crossbones"></i>
+              <span>Tehdit Değerlendirmesi / Olası Saldırı Senaryosu:</span>
+            </div>
+            <p class="leading-relaxed">{{ vuln.threat_assessment }}</p>
+          </div>
+
+          <!-- Remediation / Öneri Box -->
+          <div class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-900/40 text-xs text-emerald-200 card-print">
+            <div class="font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-wrench"></i>
+              <span>Açığı Kapatmak İçin Öneriler (Remediation):</span>
+            </div>
+            <p class="leading-relaxed">{{ vuln.remediation }}</p>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 text-print-muted pt-1">
+            <span>Sorumlu Birim: <strong>{{ vuln.department }}</strong> ({{ vuln.assignee_name }})</span>
+            <span>Hedef Termin Tarihi: <strong class="text-amber-400">{{ vuln.due_date }}</strong></span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Section 5: Remediation & Aksiyon Yol Haritası -->
+    <div class="space-y-4 page-break">
+      <div class="flex items-center gap-3 pb-2 border-b border-slate-800">
+        <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-sm">5</div>
+        <h2 class="text-lg font-bold text-white text-print-dark">Remediation Yol Haritası ve Birim Sorumlulukları</h2>
+      </div>
+
+      <p class="text-xs text-slate-300 text-print-dark">
+        Kurum güvenliğinin sağlanması amacıyla belirlenen SLA terminleri doğrultusunda ilgili departmanların alması gereken aksiyon takvimi:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% for d in departments %}
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 card-print">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-bold text-sm text-white text-print-dark">{{ d.department }}</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-semibold">{{ d.count }} Zaafiyet</span>
+          </div>
+          <p class="text-xs text-slate-400 text-print-muted mb-2">
+            {{ d.severe_count }} adet kritik/yüksek riskli açık bulunmaktadır.
+          </p>
+          <div class="text-[11px] text-cyan-400 font-medium">
+            Öncelikli Aksiyon: İlgili açıkların yama paketlerinin test ortamında doğrulanarak prodüksiyona alınması.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Signatures / Onay Bölümü -->
+    <div class="pt-8 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs text-slate-400 text-print-muted">
+      <div>
+        <div class="font-bold text-white text-print-dark mb-1">Raporu Hazırlayan</div>
+        <div>Siber Güvenlik & Pentest Ekibi</div>
+        <div class="mt-4 border-b border-slate-700 w-32"></div>
+      </div>
+
+      <div>
+        <div class="font-bold text-white text-print-dark mb-1">Bilgi Güvenliği Yöneticisi</div>
+        <div>CISO / Baş Güvenlik Sorumlusu</div>
+        <div class="mt-4 border-b border-slate-700 w-32"></div>
+      </div>
+
+      <div>
+        <div class="font-bold text-white text-print-dark mb-1">Sistem ve BT Direktörü</div>
+        <div>Bilgi İşlem Daire Başkanlığı</div>
+        <div class="mt-4 border-b border-slate-700 w-32"></div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
