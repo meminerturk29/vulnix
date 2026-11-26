@@ -59,39 +59,62 @@
         <h2 class="text-xs font-bold text-white uppercase tracking-wider">{{ T.smtp_config_title }}</h2>
       </div>
 
+      <!-- Quick Provider Presets -->
+      <div class="space-y-1.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800/60">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{{ 'Quick Provider Presets' if lang == 'en' else 'Hızlı Sağlayıcı Şablonları' }}</span>
+        <div class="flex flex-wrap gap-2 pt-0.5">
+          <button type="button" onclick="applyPreset('gmail')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-medium flex items-center gap-1.5 transition-colors">
+            <i class="fa-brands fa-google text-rose-400"></i>
+            <span>Google / Gmail</span>
+          </button>
+          <button type="button" onclick="applyPreset('outlook')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-medium flex items-center gap-1.5 transition-colors">
+            <i class="fa-brands fa-microsoft text-sky-400"></i>
+            <span>Microsoft 365</span>
+          </button>
+          <button type="button" onclick="applyPreset('brevo')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-medium flex items-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-paper-plane text-emerald-400"></i>
+            <span>Brevo</span>
+          </button>
+          <button type="button" onclick="applyPreset('custom')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-medium flex items-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-server text-purple-400"></i>
+            <span>Local Relay</span>
+          </button>
+        </div>
+      </div>
+
       <form method="POST" action="/settings/save" class="space-y-4">
         <div>
           <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_comp_name }}</label>
-          <input type="text" name="company_name" value="{{ settings.get('company_name', 'Kurumsal Siber Güvenlik') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          <input type="text" name="company_name" value="{{ settings.get('company_name', 'VULNIX Enterprise Security') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="sm:col-span-2">
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_smtp_host }}</label>
-            <input type="text" name="smtp_host" value="{{ settings.get('smtp_host', 'smtp.company.local') }}" placeholder="smtp.gmail.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
+            <input type="text" id="input_smtp_host" name="smtp_host" value="{{ settings.get('smtp_host', '') }}" placeholder="smtp.gmail.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_smtp_port }}</label>
-            <input type="number" name="smtp_port" value="{{ settings.get('smtp_port', '587') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
+            <input type="number" id="input_smtp_port" name="smtp_port" value="{{ settings.get('smtp_port', '587') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_smtp_user }}</label>
-            <input type="text" name="smtp_user" value="{{ settings.get('smtp_user', '') }}" placeholder="security@sirket.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+            <input type="text" id="input_smtp_user" name="smtp_user" value="{{ settings.get('smtp_user', '') }}" placeholder="your-email@company.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_smtp_pass }}</label>
-            <input type="password" name="smtp_pass" value="{{ settings.get('smtp_pass', '') }}" placeholder="••••••••••••" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+            <input type="password" id="input_smtp_pass" name="smtp_pass" value="{{ settings.get('smtp_pass', '') }}" placeholder="••••••••••••" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
           </div>
         </div>
 
         <div>
           <label class="block text-[11px] font-semibold text-slate-300 mb-1">{{ T.field_smtp_from }}</label>
-          <input type="text" name="smtp_from" value="{{ settings.get('smtp_from', 'VULNIX Notification <security@company.local>') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
+          <input type="text" id="input_smtp_from" name="smtp_from" value="{{ settings.get('smtp_from', 'VULNIX Notification <security@company.local>') }}" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500">
         </div>
 
         <div class="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800/80 space-y-2.5">
@@ -193,4 +216,41 @@
   </div>
 
 </div>
+
+{% block scripts %}
+<script>
+function applyPreset(provider) {
+  const host = document.getElementById('input_smtp_host');
+  const port = document.getElementById('input_smtp_port');
+  const tls = document.getElementById('smtp_tls');
+  const from = document.getElementById('input_smtp_from');
+  const user = document.getElementById('input_smtp_user');
+  
+  if (provider === 'gmail') {
+    host.value = 'smtp.gmail.com';
+    port.value = '587';
+    if (tls) tls.checked = true;
+    user.placeholder = 'username@gmail.com';
+    from.value = 'VULNIX Security Alert <username@gmail.com>';
+  } else if (provider === 'outlook') {
+    host.value = 'smtp.office365.com';
+    port.value = '587';
+    if (tls) tls.checked = true;
+    user.placeholder = 'admin@yourcompany.com';
+    from.value = 'VULNIX Security Alert <admin@yourcompany.com>';
+  } else if (provider === 'brevo') {
+    host.value = 'smtp-relay.brevo.com';
+    port.value = '587';
+    if (tls) tls.checked = true;
+    user.placeholder = 'your-brevo-login@domain.com';
+    from.value = 'VULNIX Notifications <alerts@yourdomain.com>';
+  } else if (provider === 'custom') {
+    host.value = '127.0.0.1';
+    port.value = '25';
+    if (tls) tls.checked = false;
+    from.value = 'VULNIX System <security@localhost>';
+  }
+}
+</script>
+{% endblock %}
 {% endblock %}

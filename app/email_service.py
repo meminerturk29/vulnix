@@ -37,6 +37,29 @@ def send_email(
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Simulation Mode check
+    sim_mode = get_setting("simulation_mode", "0") == "1"
+    if sim_mode:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO email_logs (vuln_id, sent_by_user_id, recipient_email, recipient_name, subject, body, status, error_message, sent_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            vuln_id,
+            sender_user_id,
+            to_email,
+            to_name,
+            subject,
+            html_content,
+            "SIMULATED (Test Mode)",
+            "Simulation mode active. Email logged to Outbox without contacting SMTP server.",
+            now_str
+        ))
+        conn.commit()
+        conn.close()
+        return True, f"Simulated: Email logged for {to_email} (Simulation Mode enabled)."
+
     # If no SMTP host is configured yet, safely store in database outbox and inform user
     if not smtp_host:
         conn = get_db_connection()
